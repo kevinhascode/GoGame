@@ -1,0 +1,16 @@
+# files #
+#########
+*.suo
+*.nunit
+*.user
+
+# dirs #
+########
+bin
+obj
+*ReSharper*
+.DS_Store
+debug
+Bin
+*/Debug
+*/Release
