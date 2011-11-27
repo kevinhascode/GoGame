@@ -5,6 +5,9 @@ using System.Text;
 
 namespace GoGame
 {
+    /// <summary>
+    /// Used to keep track of where a stone is placed.
+    /// </summary>
     internal class Loc
     {
         internal int X { get; set; }
