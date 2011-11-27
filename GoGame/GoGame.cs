@@ -16,7 +16,7 @@ namespace GoGame
         public GoGame()
         {
             InitializeComponent();
-            this.n = 3;
+            this.n = 9;
         }
 
         private void paintSquares()
@@ -27,26 +27,41 @@ namespace GoGame
 
             bool isWider = W > H;
 
-            int totalLength = (isWider) ? W : H;
-            int a = totalLength / n;
+            int lesser = (isWider) ? H : W;
+            int a = lesser / n;
             int numSquares = n - 1;
-            int D = Math.Abs(W - H);
 
-            for (int i = 1; i <= numSquares; ++i)
-                for (int j = 1; j <= numSquares; ++j)
+            float hpad = 0;
+            float vpad = 0;
+
+            if (isWider)
+                hpad = Math.Abs(W - H) / 2f;
+            else
+                vpad = Math.Abs(W - H) / 2f;
+
+            for (int i = 0; i < numSquares; ++i)
+                for (int j = 0; j < numSquares; ++j)
                     using (Graphics g = gamePanel.CreateGraphics())
                     {
-                        if (isWider)
-                            g.DrawRectangle(Pens.Black, a * i + D, a * j, a, a);
-                        else
-                            g.DrawRectangle(Pens.Black, a * i, a * j + D, a, a);
-
+                        g.DrawRectangle(Pens.Black, hpad + (1 / 2f * a) + a * i, vpad + (1 / 2f * a) + a * j, a, a);
                     }
+        }
+
+        // iterate throught enumerable of stones, painting each one to the grid as it goes.
+        private void paintStones()
+        {
+
         }
 
         private void mainSplitContainer_Panel1_Paint(object sender, PaintEventArgs e)
         {
             this.paintSquares();
+            this.paintStones();
+        }
+
+        private void mainSplitContainer_Panel1_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

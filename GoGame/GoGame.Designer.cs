@@ -40,11 +40,14 @@
             // mainSplitContainer
             // 
             this.mainSplitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.mainSplitContainer.FixedPanel = System.Windows.Forms.FixedPanel.Panel2;
             this.mainSplitContainer.Location = new System.Drawing.Point(0, 0);
             this.mainSplitContainer.Name = "mainSplitContainer";
             // 
             // mainSplitContainer.Panel1
             // 
+            this.mainSplitContainer.Panel1.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.mainSplitContainer.Panel1.Click += new System.EventHandler(this.mainSplitContainer_Panel1_Click);
             this.mainSplitContainer.Panel1.Paint += new System.Windows.Forms.PaintEventHandler(this.mainSplitContainer_Panel1_Paint);
             // 
             // mainSplitContainer.Panel2
@@ -52,6 +55,7 @@
             this.mainSplitContainer.Panel2.Controls.Add(this.btnEditContinue);
             this.mainSplitContainer.Panel2.Controls.Add(this.btnPass);
             this.mainSplitContainer.Panel2.Controls.Add(this.btnNewGame);
+            this.mainSplitContainer.Panel2.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.mainSplitContainer.Size = new System.Drawing.Size(832, 466);
             this.mainSplitContainer.SplitterDistance = 608;
             this.mainSplitContainer.TabIndex = 0;
