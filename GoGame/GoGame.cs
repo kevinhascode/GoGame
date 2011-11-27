@@ -6,25 +6,28 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using System.Drawing.Drawing2D;
 
 namespace GoGame
 {
     public partial class GoGame : Form
     {
         private int n;
+        private readonly List<Stone> stones = new List<Stone>();
+        private readonly SplitterPanel gamePanel;
 
         public GoGame()
         {
             InitializeComponent();
+
             this.n = 9;
+            this.gamePanel = this.mainSplitContainer.Panel1;
         }
 
         private void paintSquares()
         {
-            SplitterPanel gamePanel = mainSplitContainer.Panel1;
-
             int hpad, vpad, a;
-            this.calcGridValues(gamePanel, out hpad, out vpad, out a);
+            this.calcGridValues(out hpad, out vpad, out a);
 
             int numSquares = n - 1;
 
@@ -39,7 +42,18 @@ namespace GoGame
         // iterate through enumerable of stones, painting each one to the grid as it goes.
         private void paintStones()
         {
+            int hpad, vpad, a;
+            this.calcGridValues(out hpad, out vpad, out a);
 
+            foreach (Stone stone in this.stones)
+                using (SolidBrush brush = new SolidBrush(Color.Black))
+                {
+                    using (Graphics g = gamePanel.CreateGraphics())
+                    {
+                        g.SmoothingMode = SmoothingMode.AntiAlias;
+                        g.FillEllipse(brush, hpad + (stone.Loc.X * a), vpad + (stone.Loc.Y * a), a, a);
+                    }
+                }
         }
 
         private void mainSplitContainer_Panel1_Paint(object sender, PaintEventArgs e)
@@ -48,10 +62,10 @@ namespace GoGame
             this.paintStones();
         }
 
-        private void calcGridValues(SplitterPanel gamePanel, out int hpad, out int vpad, out int a)
+        private void calcGridValues(out int hpad, out int vpad, out int a)
         {
-            int H = gamePanel.Height;
-            int W = gamePanel.Width;
+            int H = this.gamePanel.Height;
+            int W = this.gamePanel.Width;
 
             bool isWider = W > H;
 
@@ -69,13 +83,11 @@ namespace GoGame
                 vpad = Math.Abs(W - H) / 2;
             }
         }
-      
+
         private void mainSplitContainer_Panel1_Click(object sender, EventArgs e)
         {
-            SplitterPanel gamePanel = mainSplitContainer.Panel1;
-
             int hpad, vpad, a;
-            this.calcGridValues(gamePanel, out hpad, out vpad, out a);
+            this.calcGridValues(out hpad, out vpad, out a);
 
             int X = ((MouseEventArgs)e).X;
             int Y = ((MouseEventArgs)e).Y;
@@ -88,9 +100,11 @@ namespace GoGame
             int sqX = (X - hpad) / a;
             int sqY = (Y - vpad) / a;
 
-            //TODO: need to fix guesses that go off the grid to the right.
+            // TODO: need to fix guesses that go off the grid to the right.
 
-            MessageBox.Show(String.Format("clickLoc:: X: {0} Y: {1}\r\nI think this is square:({2},{3})", X, Y, sqX, sqY));
+            //MessageBox.Show(String.Format("clickLoc:: X: {0} Y: {1}\r\nI think this is square:({2},{3})", X, Y, sqX, sqY));
+
+            this.stones.Add(new Stone(new Loc(sqX, sqY), true));
         }
     }
 }
