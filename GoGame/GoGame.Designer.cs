@@ -91,7 +91,6 @@
             this.Controls.Add(this.mainSplitContainer);
             this.Name = "GoGame";
             this.Text = "GoGame";
-            this.Load += new System.EventHandler(this.GoGame_Load);
             this.mainSplitContainer.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.mainSplitContainer)).EndInit();
             this.mainSplitContainer.ResumeLayout(false);
