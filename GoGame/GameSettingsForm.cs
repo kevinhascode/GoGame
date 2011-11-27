@@ -11,13 +11,13 @@ namespace GoGame
 {
     internal partial class GameSettingsForm : Form
     {
-        MainForm mainForm;
-        string goodSize, goodHandicap;
+        private MainForm mainForm;
+        private string lastGoodSize, lastGoodHandicap;
 
         //Game Modes -- Local Game/Network Game/ Play through Saved Game?
-        static readonly string[ ] SIZERANGE = new string[ ] { "", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19" };
-        static readonly string[ ] SMALLRANGE = new string[ ] { "0", "2", "3", "4", "5" };
-        static readonly string[ ] LARGERANGE = new string[ ] { "0", "2", "3", "4", "5", "6", "7", "8", "9" };
+        private static readonly string[] boardSizeRange = new string[] { "", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19" };
+        private static readonly string[] smallHandicapRange = new string[] { "0", "2", "3", "4", "5" };
+        private static readonly string[] largeHandicapRange = new string[] { "0", "2", "3", "4", "5", "6", "7", "8", "9" };
 
         internal GameSettingsForm(MainForm mainForm)
         {
@@ -25,9 +25,9 @@ namespace GoGame
 
             InitializeComponent();
 
-            this.goodSize = this.mainForm.Game.BoardSize.ToString();
+            this.lastGoodSize = this.mainForm.Game.BoardSize.ToString();
             this.cmbBoardSize.Text = this.mainForm.Game.BoardSize.ToString();
-            this.goodHandicap = this.mainForm.Game.Handicap.ToString();
+            this.lastGoodHandicap = this.mainForm.Game.Handicap.ToString();
             this.cmbHandicap.Text = this.mainForm.Game.Handicap.ToString();
         }
 
@@ -47,30 +47,31 @@ namespace GoGame
 
         private void cmbBoardSize_TextChanged(object sender, EventArgs e)
         {
-            if( !SIZERANGE.Contains( this.cmbBoardSize.Text ) )
+            if (!boardSizeRange.Contains(this.cmbBoardSize.Text))
             {
-                MessageBox.Show( "Pick one from the list.", "Illegal value" );
-                this.cmbBoardSize.Text = this.goodSize;
+                MessageBox.Show("Pick one from the list.", "Illegal value");
+                this.cmbBoardSize.Text = this.lastGoodSize;
                 this.cmbBoardSize.Focus();
                 return;
             }
 
-            if( this.cmbBoardSize.Text == "" )
+            if (this.cmbBoardSize.Text == "")
                 return;
 
-            short size = short.Parse( this.cmbBoardSize.Text );
+            short size = short.Parse(this.cmbBoardSize.Text);
 
-            if( size >= 7 )
+            // If the board is big enough, the player can choose from the large handicap range.
+            if (size >= 7)
             {
                 this.cmbHandicap.Enabled = true;
                 this.cmbHandicap.Items.Clear();
-                this.cmbHandicap.Items.AddRange( LARGERANGE );
-                if( LARGERANGE.Contains( this.goodHandicap ) )
-                    this.cmbHandicap.Text = this.goodHandicap;
+                this.cmbHandicap.Items.AddRange(largeHandicapRange);
+                if (largeHandicapRange.Contains(this.lastGoodHandicap))
+                    this.cmbHandicap.Text = this.lastGoodHandicap;
                 else
-                    this.cmbHandicap.Text = "0";
+                    this.cmbHandicap.Text = largeHandicapRange.Last();
             }
-            else if( size <= 2 )
+            else if (size <= 2)
             {
                 this.cmbHandicap.Text = "0";
                 this.cmbHandicap.Enabled = false;
@@ -79,49 +80,50 @@ namespace GoGame
             {
                 this.cmbHandicap.Enabled = true;
                 this.cmbHandicap.Items.Clear();
-                this.cmbHandicap.Items.AddRange( SMALLRANGE );
-                if( SMALLRANGE.Contains( this.goodHandicap ) )
-                    this.cmbHandicap.Text = this.goodHandicap;
+                this.cmbHandicap.Items.AddRange(smallHandicapRange);
+                if (smallHandicapRange.Contains(this.lastGoodHandicap))
+                    this.cmbHandicap.Text = this.lastGoodHandicap;
                 else
-                    this.cmbHandicap.Text = SMALLRANGE.Last();
+                    this.cmbHandicap.Text = smallHandicapRange.Last();
             }
 
-            this.goodSize = this.cmbBoardSize.Text;
+            this.lastGoodSize = this.cmbBoardSize.Text;
         }
 
+        // text must be contained in SIZERANGE, which is enforced by TextChanged
+        // but TextChanged isn't fired off when all the text is deleted
         private void cmbBoardSize_Leave(object sender, EventArgs e)
-        {   // text must be contained in SIZERANGE, which is enforced by TextChanged, just that we don't want to allow a 1x1
-            if( this.cmbBoardSize.Text == "1" || this.cmbBoardSize.Text == "" )
+        {
+            if (this.cmbBoardSize.Text == "")
             {
-                MessageBox.Show( "Pick one from the list.", "Illegal value" );
+                MessageBox.Show("Pick one from the list.", "Illegal value");
                 this.cmbBoardSize.Focus();
             }
         }
 
         private void cmbHandicap_TextChanged(object sender, EventArgs e)
         {
-            short size = short.Parse( this.cmbBoardSize.Text );
+            short size = short.Parse(this.cmbBoardSize.Text);
 
-            if( size >= 7 )
+            if (size >= 7)
             {
-                if( !GameSettingsForm.LARGERANGE.Contains( this.cmbHandicap.Text ) )
+                if (!GameSettingsForm.largeHandicapRange.Contains(this.cmbHandicap.Text))
                 {
-                    MessageBox.Show( "Pick one from the list.", "Illegal value" );
-                    this.cmbHandicap.Text = this.goodHandicap;
+                    MessageBox.Show("Pick one from the list.", "Illegal value");
+                    this.cmbHandicap.Text = this.lastGoodHandicap;
                     this.cmbHandicap.Focus();
                     return;
                 }
             }
-            else
-                if( !GameSettingsForm.SMALLRANGE.Contains( this.cmbHandicap.Text ) )
-                {
-                    MessageBox.Show( "Pick one from the list.", "Illegal value" );
-                    this.cmbHandicap.Text = this.goodHandicap;
-                    this.cmbHandicap.Focus();
-                    return;
-                }
+            else if (!GameSettingsForm.smallHandicapRange.Contains(this.cmbHandicap.Text))
+            {
+                MessageBox.Show("Pick one from the list.", "Illegal value");
+                this.cmbHandicap.Text = this.lastGoodHandicap;
+                this.cmbHandicap.Focus();
+                return;
+            }
 
-            this.goodHandicap = this.cmbHandicap.Text;
+            this.lastGoodHandicap = this.cmbHandicap.Text;
         }
     }
 }
