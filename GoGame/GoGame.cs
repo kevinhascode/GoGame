@@ -46,7 +46,7 @@ namespace GoGame
             this.calcGridValues(out hpad, out vpad, out a);
 
             foreach (Stone stone in this.stones)
-                using (SolidBrush brush = new SolidBrush(Color.Black))
+                using (SolidBrush brush = new SolidBrush((stone.IsWhite) ? Color.White : Color.Black))
                 {
                     using (Graphics g = gamePanel.CreateGraphics())
                     {
@@ -92,10 +92,10 @@ namespace GoGame
             int X = ((MouseEventArgs)e).X;
             int Y = ((MouseEventArgs)e).Y;
 
-            using (Graphics g = gamePanel.CreateGraphics())
-            {
-                g.DrawRectangle(Pens.Red, X - 5, Y - 5, 10, 10);
-            }
+            //using (Graphics g = gamePanel.CreateGraphics())
+            //{
+            //    g.DrawRectangle(Pens.Red, X - 5, Y - 5, 10, 10);
+            //}
 
             int sqX = (X - hpad) / a;
             int sqY = (Y - vpad) / a;
@@ -105,6 +105,8 @@ namespace GoGame
             //MessageBox.Show(String.Format("clickLoc:: X: {0} Y: {1}\r\nI think this is square:({2},{3})", X, Y, sqX, sqY));
 
             this.stones.Add(new Stone(new Loc(sqX, sqY), true));
+
+            this.gamePanel.Invalidate();
         }
     }
 }
