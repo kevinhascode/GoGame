@@ -22,22 +22,11 @@ namespace GoGame
         private void paintSquares()
         {
             SplitterPanel gamePanel = mainSplitContainer.Panel1;
-            int H = gamePanel.Height;
-            int W = gamePanel.Width;
 
-            bool isWider = W > H;
+            int hpad, vpad, a;
+            this.calcGridValues(gamePanel, out hpad, out vpad, out a);
 
-            int lesser = (isWider) ? H : W;
-            int a = lesser / n;
             int numSquares = n - 1;
-
-            float hpad = 0;
-            float vpad = 0;
-
-            if (isWider)
-                hpad = Math.Abs(W - H) / 2f;
-            else
-                vpad = Math.Abs(W - H) / 2f;
 
             for (int i = 0; i < numSquares; ++i)
                 for (int j = 0; j < numSquares; ++j)
@@ -47,7 +36,7 @@ namespace GoGame
                     }
         }
 
-        // iterate throught enumerable of stones, painting each one to the grid as it goes.
+        // iterate through enumerable of stones, painting each one to the grid as it goes.
         private void paintStones()
         {
 
@@ -59,9 +48,49 @@ namespace GoGame
             this.paintStones();
         }
 
+        private void calcGridValues(SplitterPanel gamePanel, out int hpad, out int vpad, out int a)
+        {
+            int H = gamePanel.Height;
+            int W = gamePanel.Width;
+
+            bool isWider = W > H;
+
+            int lesser = (isWider) ? H : W;
+            a = lesser / n;
+
+            if (isWider)
+            {
+                hpad = Math.Abs(W - H) / 2;
+                vpad = 0;
+            }
+            else
+            {
+                hpad = 0;
+                vpad = Math.Abs(W - H) / 2;
+            }
+        }
+      
         private void mainSplitContainer_Panel1_Click(object sender, EventArgs e)
         {
+            SplitterPanel gamePanel = mainSplitContainer.Panel1;
 
+            int hpad, vpad, a;
+            this.calcGridValues(gamePanel, out hpad, out vpad, out a);
+
+            int X = ((MouseEventArgs)e).X;
+            int Y = ((MouseEventArgs)e).Y;
+
+            using (Graphics g = gamePanel.CreateGraphics())
+            {
+                g.DrawRectangle(Pens.Red, X - 5, Y - 5, 10, 10);
+            }
+
+            int sqX = (X - hpad) / a;
+            int sqY = (Y - vpad) / a;
+
+            //TODO: need to fix guesses that go off the grid to the right.
+
+            MessageBox.Show(String.Format("clickLoc:: X: {0} Y: {1}\r\nI think this is square:({2},{3})", X, Y, sqX, sqY));
         }
     }
 }
