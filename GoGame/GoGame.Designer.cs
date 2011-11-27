@@ -29,9 +29,9 @@
         private void InitializeComponent()
         {
             this.mainSplitContainer = new System.Windows.Forms.SplitContainer();
-            this.btnNewGame = new System.Windows.Forms.Button();
-            this.btnPass = new System.Windows.Forms.Button();
             this.btnEditContinue = new System.Windows.Forms.Button();
+            this.btnPass = new System.Windows.Forms.Button();
+            this.btnNewGame = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.mainSplitContainer)).BeginInit();
             this.mainSplitContainer.Panel2.SuspendLayout();
             this.mainSplitContainer.SuspendLayout();
@@ -43,6 +43,10 @@
             this.mainSplitContainer.Location = new System.Drawing.Point(0, 0);
             this.mainSplitContainer.Name = "mainSplitContainer";
             // 
+            // mainSplitContainer.Panel1
+            // 
+            this.mainSplitContainer.Panel1.Paint += new System.Windows.Forms.PaintEventHandler(this.mainSplitContainer_Panel1_Paint);
+            // 
             // mainSplitContainer.Panel2
             // 
             this.mainSplitContainer.Panel2.Controls.Add(this.btnEditContinue);
@@ -52,14 +56,14 @@
             this.mainSplitContainer.SplitterDistance = 608;
             this.mainSplitContainer.TabIndex = 0;
             // 
-            // btnNewGame
+            // btnEditContinue
             // 
-            this.btnNewGame.Location = new System.Drawing.Point(65, 158);
-            this.btnNewGame.Name = "btnNewGame";
-            this.btnNewGame.Size = new System.Drawing.Size(75, 23);
-            this.btnNewGame.TabIndex = 0;
-            this.btnNewGame.Text = "New Game";
-            this.btnNewGame.UseVisualStyleBackColor = true;
+            this.btnEditContinue.Location = new System.Drawing.Point(65, 187);
+            this.btnEditContinue.Name = "btnEditContinue";
+            this.btnEditContinue.Size = new System.Drawing.Size(75, 42);
+            this.btnEditContinue.TabIndex = 0;
+            this.btnEditContinue.Text = "Edit / Continue";
+            this.btnEditContinue.UseVisualStyleBackColor = true;
             // 
             // btnPass
             // 
@@ -70,14 +74,14 @@
             this.btnPass.Text = "Pass";
             this.btnPass.UseVisualStyleBackColor = true;
             // 
-            // btnEditContinue
+            // btnNewGame
             // 
-            this.btnEditContinue.Location = new System.Drawing.Point(65, 187);
-            this.btnEditContinue.Name = "btnEditContinue";
-            this.btnEditContinue.Size = new System.Drawing.Size(75, 42);
-            this.btnEditContinue.TabIndex = 0;
-            this.btnEditContinue.Text = "Edit / Continue";
-            this.btnEditContinue.UseVisualStyleBackColor = true;
+            this.btnNewGame.Location = new System.Drawing.Point(65, 158);
+            this.btnNewGame.Name = "btnNewGame";
+            this.btnNewGame.Size = new System.Drawing.Size(75, 23);
+            this.btnNewGame.TabIndex = 0;
+            this.btnNewGame.Text = "New Game";
+            this.btnNewGame.UseVisualStyleBackColor = true;
             // 
             // GoGame
             // 
