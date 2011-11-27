@@ -1,9 +1,0 @@
-c:\users\klaverdiere\documents\visual studio 2010\Projects\GoGame\GoGame\obj\x86\Debug\ResolveAssemblyReference.cache
-c:\users\klaverdiere\documents\visual studio 2010\Projects\GoGame\GoGame\obj\x86\Debug\GoGame.GoGame.resources
-c:\users\klaverdiere\documents\visual studio 2010\Projects\GoGame\GoGame\obj\x86\Debug\GoGame.Properties.Resources.resources
-c:\users\klaverdiere\documents\visual studio 2010\Projects\GoGame\GoGame\obj\x86\Debug\GenerateResource.read.1.tlog
-c:\users\klaverdiere\documents\visual studio 2010\Projects\GoGame\GoGame\obj\x86\Debug\GenerateResource.write.1.tlog
-c:\users\klaverdiere\documents\visual studio 2010\Projects\GoGame\GoGame\bin\Debug\GoGame.exe
-c:\users\klaverdiere\documents\visual studio 2010\Projects\GoGame\GoGame\bin\Debug\GoGame.pdb
-c:\users\klaverdiere\documents\visual studio 2010\Projects\GoGame\GoGame\obj\x86\Debug\GoGame.exe
-c:\users\klaverdiere\documents\visual studio 2010\Projects\GoGame\GoGame\obj\x86\Debug\GoGame.pdb
