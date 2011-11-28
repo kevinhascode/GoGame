@@ -12,6 +12,7 @@ namespace GoGame
 {
     public partial class MainForm : Form
     {
+        // internal so it's reachable from GameSettingsForm
         internal GoGame Game;
         // Field will only be used for painting purposes. Yes, that means maintaining two separate lists of plays.
         // One of stones for painting and one of chains for logical purposes.
@@ -113,13 +114,13 @@ namespace GoGame
             int sqY = (Y - vpad) / a;
 
             #region DEBUG code
-            
+
             //using (Graphics g = gamePanel.CreateGraphics())
             //{
             //    g.DrawRectangle(Pens.Red, X - 5, Y - 5, 10, 10);
             //}
             //MessageBox.Show(String.Format("clickLoc:: X: {0} Y: {1}\r\nI think this is square:({2},{3})", X, Y, sqX, sqY));
-            
+
             #endregion
 
             // takes care of clicks to the right of (or below) the grid
@@ -132,8 +133,8 @@ namespace GoGame
             {
                 RequestResponse response = this.Game.ProposedPlay(new Loc(sqX, sqY));
 
-                if (response.Stone != null)
-                    this.stonesForPainting.Add(response.Stone);
+                if (response.Move != null)
+                    this.stonesForPainting.Add(response.Move.StonePlaced);
                 else
                     MessageBox.Show(response.Reason);
             }
@@ -145,7 +146,7 @@ namespace GoGame
 
         private void btnNewGame_Click(object sender, EventArgs e)
         {
-            // TODO: implement
+            this.NewGame();
         }
 
         #region Tool Strip Items

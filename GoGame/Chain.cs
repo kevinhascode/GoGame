@@ -8,7 +8,7 @@ namespace GoGame
     // TODO: implement liberties
     internal class Chain
     {
-        internal List<Stone> Stones { get; set; }
+        internal readonly List<Stone> Stones;
         internal List<Loc> Liberties { get; set; }
 
         public Chain()

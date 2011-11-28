@@ -8,11 +8,11 @@ namespace GoGame
     internal class RequestResponse
     {
         internal string Reason { get; set; }
-        internal Stone Stone { get; set; }
+        internal Move Move { get; set; }
 
-        public RequestResponse(Stone stone)
+        public RequestResponse(Move move)
         {
-            this.Stone = stone;
+            this.Move = move;
         }
 
         public RequestResponse(string reason)

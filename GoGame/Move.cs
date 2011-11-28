@@ -5,10 +5,21 @@ using System.Text;
 
 namespace GoGame
 {
-    // TODO: Where does this really belong? 
     internal class Move
     {
-        internal Stone StonePlaced { get; set; }
-        internal List<Chain> ChainsKilled { get; set; }
+        internal readonly Stone StonePlaced;
+        internal readonly List<Chain> ChainsKilled;
+
+        public Move(Stone stonePlaced)
+        {
+            this.StonePlaced = stonePlaced;
+            this.ChainsKilled = new List<Chain>();
+        }
+
+        public Move(Stone stonePlaced, List<Chain> chainsKilled)
+        {
+            this.StonePlaced = stonePlaced;
+            this.ChainsKilled = chainsKilled;
+        }
     }
 }

@@ -46,9 +46,9 @@ namespace GoGame
                 && this.isNotConflictHelper(this.Game.whiteChains, proposedLoc);
         }
 
-        private bool isNotConflictHelper(List<Chain> chains, Loc proposedLoc)
+        private bool isNotConflictHelper(List<Chain> chainsOfLikeColor, Loc proposedLoc)
         {
-            foreach (Chain chain in chains)
+            foreach (Chain chain in chainsOfLikeColor)
                 foreach (Stone stone in chain.Stones)
                     if (proposedLoc.Equals(stone.Loc))
                         return false;
@@ -68,15 +68,16 @@ namespace GoGame
 
             GameLogic.ChangeTurn();
 
-            return new RequestResponse(stone);
+            return new RequestResponse(new Move(stone));
         }
 
-        private void addStoneToChains(List<Chain> chains, Stone stone)
+        // By this point, the move is already deemed valid, this adds the stone to the logical stone collections.
+        private void addStoneToChains(List<Chain> chainsOfLikeColor, Stone stone)
         {
             List<Chain> chainsToMerge = new List<Chain>();
 
             // for each chain of the same color with a liberty at the proposed location
-            foreach (Chain chain in chains)
+            foreach (Chain chain in chainsOfLikeColor)
                 foreach (Loc loc in chain.Liberties)
                     if (stone.Loc.Equals(loc))
                         chainsToMerge.Add(chain);
@@ -85,12 +86,12 @@ namespace GoGame
             if (chainsToMerge.Count > 0)
             {
                 foreach (Chain chain in chainsToMerge)
-                    chains.Remove(chain);
+                    chainsOfLikeColor.Remove(chain);
 
-                chains.Add(Chain.Merge(chainsToMerge));
+                chainsOfLikeColor.Add(Chain.Merge(chainsToMerge));
             }
             else
-                chains.Add(new Chain(stone));
+                chainsOfLikeColor.Add(new Chain(stone));
         }
     }
 }
