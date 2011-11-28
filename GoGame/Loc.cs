@@ -18,5 +18,10 @@ namespace GoGame
             X = x;
             Y = y;
         }
+
+        internal bool Equals(Loc loc)
+        {
+            return (loc.X == this.X) && (loc.Y == this.Y);
+        }
     }
 }

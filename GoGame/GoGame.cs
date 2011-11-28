@@ -35,6 +35,11 @@ namespace GoGame
             }
         }
 
+        internal readonly List<Chain> whiteChains = new List<Chain>();
+        internal readonly List<Chain> blackChains = new List<Chain>();
+
+        private GameLogic Logic;
+
         private int prisonersTakenByWhite { get; set; }
         private int prisonersTakenByBlack { get; set; }
 
@@ -44,12 +49,26 @@ namespace GoGame
             this.handicap = Properties.Settings.Default.Handicap;
             this.prisonersTakenByWhite = 0;
             this.prisonersTakenByBlack = 0;
+
+            this.Logic = new GameLogic(this);
         }
 
         internal void Reset()
         {
-            this.prisonersTakenByBlack = 0;
             this.prisonersTakenByWhite = 0;
+            this.prisonersTakenByBlack = 0;
+            this.whiteChains.Clear();
+            this.blackChains.Clear();
+
+            GameLogic.Reset(this);
+        }
+
+        internal RequestResponse ProposedPlay(Loc loc)
+        {
+            if (this.Logic.IsLegal(loc))
+                return this.Logic.PlaceStone(loc);
+            else
+                return new RequestResponse("Can't play there.");
         }
     }
 }

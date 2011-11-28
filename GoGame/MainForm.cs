@@ -109,20 +109,34 @@ namespace GoGame
 
             int X = ((MouseEventArgs)e).X;
             int Y = ((MouseEventArgs)e).Y;
+            int sqX = (X - hpad) / a;
+            int sqY = (Y - vpad) / a;
 
+            #region DEBUG code
+            
             //using (Graphics g = gamePanel.CreateGraphics())
             //{
             //    g.DrawRectangle(Pens.Red, X - 5, Y - 5, 10, 10);
             //}
-
-            int sqX = (X - hpad) / a;
-            int sqY = (Y - vpad) / a;
-
-            // TODO: need to fix guesses that go off the grid to the right.
-
             //MessageBox.Show(String.Format("clickLoc:: X: {0} Y: {1}\r\nI think this is square:({2},{3})", X, Y, sqX, sqY));
+            
+            #endregion
 
-            this.stonesForPainting.Add(new Stone(new Loc(sqX, sqY), true));
+            // takes care of clicks to the right of (or below) the grid
+            if (sqX >= this.Game.BoardSize || sqY >= this.Game.BoardSize)
+                return;
+            // takes care of clicks to the left of (or above) the grid
+            else if ((X - hpad) < 0 || (Y - vpad) < 0)
+                return;
+            else
+            {
+                RequestResponse response = this.Game.ProposedPlay(new Loc(sqX, sqY));
+
+                if (response.Stone != null)
+                    this.stonesForPainting.Add(response.Stone);
+                else
+                    MessageBox.Show(response.Reason);
+            }
 
             this.gamePanel.Invalidate();
         }
@@ -131,6 +145,7 @@ namespace GoGame
 
         private void btnNewGame_Click(object sender, EventArgs e)
         {
+            // TODO: implement
         }
 
         #region Tool Strip Items

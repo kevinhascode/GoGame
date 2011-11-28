@@ -47,6 +47,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Chain.cs" />
+    <Compile Include="GameLogic.cs" />
     <Compile Include="GameSettingsForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -64,6 +65,7 @@
     <Compile Include="Move.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RequestResponse.cs" />
     <Compile Include="Stone.cs" />
     <EmbeddedResource Include="GameSettingsForm.resx">
       <DependentUpon>GameSettingsForm.cs</DependentUpon>
