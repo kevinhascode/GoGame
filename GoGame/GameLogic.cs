@@ -40,6 +40,17 @@ namespace GoGame
                 return false;
         }
 
+        // TODO: from jotted down notes
+        //internal Move IsValid(Loc loc)
+        //{
+        //    List<Chain> chain = isKill(loc);
+            
+        //    if (chain != null)
+        //        return IsKo(loc);
+        //    else
+        //        return IsSuicide(loc);
+        //}
+
         private bool isNotConflict(Loc proposedLoc)
         {
             return this.isNotConflictHelper(this.Game.blackChains, proposedLoc)
@@ -56,9 +67,22 @@ namespace GoGame
             return true;
         }
 
+        private List<Chain> isKill()
+        {
+            /*
+             * Iterate through chains of opposite color.
+             * if any have 1 liberty, it's a kill and is returned in List<Chain>
+             */
+            return new List<Chain>();
+        }
+
         // Updates lists accordingly with correct location and color.
         internal RequestResponse PlaceStone(Loc loc)
         {
+            // By this point, we have MergeResult and KilledChains
+
+
+
             Stone stone = new Stone(loc, IsWhiteMove);
 
             if (IsWhiteMove)

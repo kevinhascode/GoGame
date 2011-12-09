@@ -1,15 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace GoGame
 {
-    // TODO: implement liberties
     internal class Chain
     {
         internal readonly List<Stone> Stones;
         internal List<Loc> Liberties { get; set; }
+
+        internal bool IsWhite
+        {
+            get { return this.Stones.First().IsWhite; }
+        }
 
         public Chain()
         {

@@ -65,6 +65,8 @@ namespace GoGame
 
         internal RequestResponse ProposedPlay(Loc loc)
         {
+            //TODO: If there is a kill, and it's 1 chain, w/ one stone, possibleKoLoc = loc
+
             if (this.Logic.IsLegal(loc))
                 return this.Logic.PlaceStone(loc);
             else
