@@ -39,12 +39,25 @@ namespace GoGame
             else
                 return false;
         }
+        
+        /* The next best thing to a picture in the source code.
+         
+                   IsValid()
+                      ||
+                      ||
+                    IsKill
+                  n/      \y
+             IsSuicide    IsKo
+             n/    \y    n/  \y
+            PLAY    NO  PLAY  NO
+         
+         */
 
         // TODO: from jotted down notes
         //internal Move IsValid(Loc loc)
         //{
         //    List<Chain> chain = isKill(loc);
-            
+
         //    if (chain != null)
         //        return IsKo(loc);
         //    else
@@ -80,8 +93,6 @@ namespace GoGame
         internal RequestResponse PlaceStone(Loc loc)
         {
             // By this point, we have MergeResult and KilledChains
-
-
 
             Stone stone = new Stone(loc, IsWhiteMove);
 
