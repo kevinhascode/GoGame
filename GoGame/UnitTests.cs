@@ -190,9 +190,8 @@ namespace GoGame
       
          X = 1 & 2
          
-         . . .
-         . . .
-         X . .
+         . .
+         X .
          
          */
         [Test]
