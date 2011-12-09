@@ -24,7 +24,7 @@ namespace GoGame
         [Test]
         public void Allow_Kill()
         {
-            //TODO: Implement
+            Assert.Equals(0, 1);
         }
 
         /* B: Would be suicide, but the merge makes a breath.
@@ -38,7 +38,7 @@ namespace GoGame
         [Test]
         public void Allow_MergeMakesBreath()
         {
-            //TODO: Implement
+            Assert.Equals(0, 1);
         }
 
         /* C: Kill.
@@ -51,7 +51,7 @@ namespace GoGame
         [Test]
         public void Kill()
         {
-            //TODO: Implement
+            Assert.Equals(0, 1);
         }
 
         /* D: Ko.
@@ -65,7 +65,7 @@ namespace GoGame
         [Test]
         public void Ko()
         {
-            //TODO: Implement
+            Assert.Equals(0, 1);
         }
 
         /* F: Live normally.
@@ -78,7 +78,7 @@ namespace GoGame
         [Test]
         public void Live()
         {
-            //TODO: Implement
+            Assert.Equals(0, 1);
         }
 
         /* G: Live normally on edge.
@@ -91,7 +91,7 @@ namespace GoGame
         [Test]
         public void LiveEdge()
         {
-            //TODO: Implement
+            Assert.Equals(0, 1);
         }
 
         /* H: Live normally in corner.
@@ -104,7 +104,7 @@ namespace GoGame
         [Test]
         public void LiveCorner()
         {
-            //TODO: Implement
+            Assert.Equals(0, 1);
         }
 
         /* I: Suicide.
@@ -117,7 +117,7 @@ namespace GoGame
         [Test]
         public void Disallow_Suicide()
         {
-            //TODO: Implement
+            Assert.Equals(0, 1);
         }
 
         /* J: Makes groups.
@@ -132,7 +132,7 @@ namespace GoGame
         public void MakesGroups()
         {
             // Test explicitly for number of groups and each groups stones and breaths.
-            //TODO: Implement
+            Assert.Equals(0, 1);
         }
 
         /* K: Pass + Pass => ends game. 
@@ -140,7 +140,7 @@ namespace GoGame
         [Test]
         public void PassPass_EndGame()
         {
-            //TODO: Implement
+            Assert.Equals(0, 1);
         }
 
         /* L: Play-Pass-Play => two stones of same color.
@@ -153,7 +153,7 @@ namespace GoGame
         [Test]
         public void PassPlayPass_SameColor()
         {
-            //TODO: Implement
+            Assert.Equals(0, 1);
         }
 
         /* M: Merge that's a suicide.
@@ -168,7 +168,7 @@ namespace GoGame
         [Test]
         public void Disallow_MergeMakesSuicide()
         {
-            //TODO: Implement
+            Assert.Equals(0, 1);
         }
 
         /* N: Not a suicide bc adds a new breath.
@@ -183,7 +183,7 @@ namespace GoGame
         [Test]
         public void Allow_BreathPreventsSuicide()
         {
-            //TODO: Implement
+            Assert.Equals(0, 1);
         }
 
         /* P: Conflict playing one stone on top of the other
@@ -213,7 +213,7 @@ namespace GoGame
         [Test]
         public void LibertyCount()
         {
-            //TODO: Implement
+            Assert.Equals(0, 1);
         }
     }
 }
