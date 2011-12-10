@@ -29,31 +29,57 @@ namespace GoGame
             IsWhiteMove = !IsWhiteMove;
         }
 
-        // Checks on legality of move.
-        public bool IsLegal(Loc proposedLoc)
-        {
-            // TODO: would like to return RequestResponse from here, but not sure how it should look
-            if (isNotConflict(proposedLoc))
-                return true;
-            else
-                return false;
-        }
-
         /* The next best thing to a picture in the source code.
          
-                   IsValid()
-                      ||
-                      ||
-                    IsKill
-                  n/      \y
-             IsSuicide    IsKo
-             n/    \y    n/  \y
-            PLAY    NO  PLAY  NO
+                       IsLegal()
+                          ||
+                          ||
+                        IsKill
+                      n/      \y
+                 IsSuicide    IsKo
+                 n/    \y    n/  \y
+                PLAY    NO  PLAY  NO
          
          */
+        public IsLegalResponse IsLegal(Loc proposedLoc)
+        {
+            if (isConflict(proposedLoc))
+                return new IsLegalResponse(ReasonEnum.Conflict);
+
+            if (isKill(proposedLoc))
+            {
+                if (isKo(proposedLoc))
+                    return new IsLegalResponse(ReasonEnum.Ko);
+                else
+                {
+
+                }
+            }
+            else
+            {
+                if (isSuicide(proposedLoc))
+                    return new IsLegalResponse(ReasonEnum.Suicide);
+                else
+                {
+
+                }
+            }
+
+            return new IsLegalResponse(null, new List<Chain>());
+        }
+
+        private bool isSuicide(Loc proposedLoc)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        private bool isKo(Loc proposedLoc)
+        {
+            throw new System.NotImplementedException();
+        }
 
         // TODO: from jotted down notes
-        //public Move IsValid(Loc loc)
+        //public Move IsLegal(Loc loc)
         //{
         //    List<Chain> chain = isKill(loc);
 
@@ -63,13 +89,13 @@ namespace GoGame
         //        return IsSuicide(loc);
         //}
 
-        private bool isNotConflict(Loc proposedLoc)
+        private bool isConflict(Loc proposedLoc)
         {
-            return this.isNotConflictHelper(this.Game.blackChains, proposedLoc)
-                && this.isNotConflictHelper(this.Game.whiteChains, proposedLoc);
+            return this.isConflictHelper(this.Game.blackChains, proposedLoc)
+                && this.isConflictHelper(this.Game.whiteChains, proposedLoc);
         }
 
-        private bool isNotConflictHelper(List<Chain> chainsOfLikeColor, Loc proposedLoc)
+        private bool isConflictHelper(List<Chain> chainsOfLikeColor, Loc proposedLoc)
         {
             foreach (Chain chain in chainsOfLikeColor)
                 foreach (Stone stone in chain.Stones)
@@ -79,13 +105,14 @@ namespace GoGame
             return true;
         }
 
-        private List<Chain> isKill()
+        private bool isKill(Loc proposedLoc)
+        //private List<Chain> isKill(Loc proposedLoc)
         {
             /*
              * Iterate through chains of opposite color.
              * if any have 1 liberty, it's a kill and is returned in List<Chain>
              */
-            return new List<Chain>();
+            return false;//new List<Chain>();
         }
 
         // Updates lists accordingly with correct location and color.

@@ -167,7 +167,8 @@ namespace GoGame
 
         private void btnEditContinue_Click(object sender, EventArgs e)
         {
-
+            // TODO: Implement this.
+            MessageBox.Show("Implement Me!!");
         }
     }
 }

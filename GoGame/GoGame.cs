@@ -83,7 +83,9 @@ namespace GoGame
 
         public RequestResponse ProposedPlay(Loc loc)
         {
-            if (this.Logic.IsLegal(loc))
+            IsLegalResponse isLegalResponse = this.Logic.IsLegal(loc);
+
+            if (isLegalResponse.Reason == ReasonEnum.Fine)
                 return this.Logic.PlaceStone(loc);
             else
                 return new RequestResponse(ReasonEnum.Conflict);
