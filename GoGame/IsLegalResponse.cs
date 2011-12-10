@@ -5,18 +5,16 @@ namespace GoGame
     public class IsLegalResponse
     {
         public ReasonEnum Reason { get; set; }
-        public List<Chain> Killed { get; set; }
-        public List<Chain> MergeResult { get; set; }
+        public List<Chain> Killed;
+        public Chain MergeResultant;
+        public List<Chain> AbsorbedInMerge;
 
-        public IsLegalResponse(List<Chain> killed, List<Chain> mergeResult)
-        {
-            this.Killed = killed;
-            this.MergeResult = mergeResult;
-        }
-
-        public IsLegalResponse(ReasonEnum reason)
+        public IsLegalResponse(ReasonEnum reason = ReasonEnum.Fine)
         {
             this.Reason = reason;
+            this.Killed = new List<Chain>();
+            this.MergeResultant = new Chain();
+            this.AbsorbedInMerge = new List<Chain>();
         }
     }
 }

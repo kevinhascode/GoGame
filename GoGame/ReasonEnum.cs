@@ -6,6 +6,6 @@
         Conflict,
         Suicide,
         Ko,
-        Unimplemented
+        Pass
     }
 }

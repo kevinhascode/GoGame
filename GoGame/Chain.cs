@@ -25,19 +25,5 @@ namespace GoGame
             this.Stones.Add(stone);
             this.Liberties = liberties;
         }
-
-        // Convenience method for merging multiple chains
-        public static Chain Merge(List<Chain> chains)
-        {
-            Chain toReturn = new Chain();
-
-            foreach (Chain chain in chains)
-            {
-                toReturn.Stones.AddRange(chain.Stones);
-                toReturn.Liberties = toReturn.Liberties.Union(chain.Liberties).ToList<Loc>();
-            }
-
-            return toReturn;
-        }
     }
 }

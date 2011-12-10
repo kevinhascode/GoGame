@@ -38,19 +38,30 @@ namespace GoGame
         public readonly List<Chain> whiteChains = new List<Chain>();
         public readonly List<Chain> blackChains = new List<Chain>();
 
+        public List<Stone> StonesPlayed
+        {
+            get
+            {
+                List<Stone> played = new List<Stone>();
+
+                foreach (Chain chain in whiteChains)
+                    played.AddRange(chain.Stones);
+
+                foreach (Chain chain in blackChains)
+                    played.AddRange(chain.Stones);
+
+                return played;
+            }
+        }
+
         public List<Loc> LocsPlayed
         {
             get
             {
                 List<Loc> played = new List<Loc>();
 
-                foreach (Chain chain in whiteChains)
-                    foreach (Stone stone in chain.Stones)
-                        played.Add(stone.Loc);
-
-                foreach (Chain chain in blackChains)
-                    foreach (Stone stone in chain.Stones)
-                        played.Add(stone.Loc);
+                foreach (Stone stone in this.StonesPlayed)
+                    played.Add(stone.Loc);
 
                 return played;
             }
@@ -59,7 +70,8 @@ namespace GoGame
         public int PrisonersTakenByWhite { get; private set; }
         public int PrisonersTakenByBlack { get; private set; }
 
-        public Loc PossibleKoLoc { get; set; }
+        public Loc PossibleKoLoc = new Loc(-1, -1);
+        public bool LastWasPass;
 
         public GoGame()
         {
@@ -81,14 +93,31 @@ namespace GoGame
             this.Logic.Reset(this);
         }
 
+        // TODO: implement PASSing
         public RequestResponse ProposedPlay(Loc loc)
         {
+            // if it's ==, then it's a PASS
+            if (loc.X == this.boardSize)
+            {
+                if (this.LastWasPass)
+                {
+                    this.IsOver = true;
+                    // TODO: game-ending logic goes here.
+                }
+
+                this.LastWasPass = true;
+                this.Logic.ChangeTurn();
+                return new RequestResponse(ReasonEnum.Pass);
+            }
+            else
+                this.LastWasPass = false;
+
             IsLegalResponse isLegalResponse = this.Logic.IsLegal(loc);
 
             if (isLegalResponse.Reason == ReasonEnum.Fine)
-                return this.Logic.PlaceStone(loc);
+                return this.Logic.PlaceStone(loc, isLegalResponse);
             else
-                return new RequestResponse(ReasonEnum.Conflict);
+                return new RequestResponse(isLegalResponse.Reason);
         }
     }
 }

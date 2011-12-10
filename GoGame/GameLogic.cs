@@ -43,56 +43,52 @@ namespace GoGame
          */
         public IsLegalResponse IsLegal(Loc proposedLoc)
         {
+            IsLegalResponse response = new IsLegalResponse();
+
             if (isConflict(proposedLoc))
-                return new IsLegalResponse(ReasonEnum.Conflict);
-
-            if (isKill(proposedLoc))
             {
-                if (isKo(proposedLoc))
-                    return new IsLegalResponse(ReasonEnum.Ko);
-                else
-                {
+                response.Reason = ReasonEnum.Conflict;
+                return response;
+            }
 
+            response.Killed = determineKills(proposedLoc);
+
+            if (response.Killed.Any())
+            {   // IsKill
+                if (isKo(proposedLoc, response.Killed))
+                {
+                    response.Reason = ReasonEnum.Ko;
+                    return response;
+                }
+                else
+                {   // Determine MergeResultant and AbsorbedByMerge for future use.
+                    // Does proposedLoc have any friendly neighbors?
+                    List<Chain> friendlyNeighborChains = findFriendlyNeighborChains(proposedLoc);
+
+                    if (friendlyNeighborChains.Any())
+                    {
+                        // If so, merge
+                        friendlyNeighborChains.Add(new Chain(new Stone(proposedLoc, IsWhiteMove),
+                                                             this.findLiberties(proposedLoc)));
+                        response.MergeResultant = this.merge(friendlyNeighborChains);
+                        response.AbsorbedInMerge = friendlyNeighborChains;
+                    }
+
+                    return response;
                 }
             }
             else
-            {
-                if (isSuicide(proposedLoc))
-                    return new IsLegalResponse(ReasonEnum.Suicide);
-                else
-                {
+            {   // !IsKill
+                this.determineSuicide(proposedLoc, response);
 
-                }
+                return response;
             }
-
-            return new IsLegalResponse(null, new List<Chain>());
         }
-
-        private bool isSuicide(Loc proposedLoc)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        private bool isKo(Loc proposedLoc)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        // TODO: from jotted down notes
-        //public Move IsLegal(Loc loc)
-        //{
-        //    List<Chain> chain = isKill(loc);
-
-        //    if (chain != null)
-        //        return IsKo(loc);
-        //    else
-        //        return IsSuicide(loc);
-        //}
 
         private bool isConflict(Loc proposedLoc)
         {
             return this.isConflictHelper(this.Game.blackChains, proposedLoc)
-                && this.isConflictHelper(this.Game.whiteChains, proposedLoc);
+                || this.isConflictHelper(this.Game.whiteChains, proposedLoc);
         }
 
         private bool isConflictHelper(List<Chain> chainsOfLikeColor, Loc proposedLoc)
@@ -100,41 +96,102 @@ namespace GoGame
             foreach (Chain chain in chainsOfLikeColor)
                 foreach (Stone stone in chain.Stones)
                     if (proposedLoc.Equals(stone.Loc))
-                        return false;
+                        return true;
 
-            return true;
+            return false;
         }
 
-        private bool isKill(Loc proposedLoc)
-        //private List<Chain> isKill(Loc proposedLoc)
+        // TODO: Can also do a quick scan of neighbors if there are any foes, so see if even need to look for kills.
+        private List<Chain> determineKills(Loc proposedLoc)
         {
-            /*
-             * Iterate through chains of opposite color.
-             * if any have 1 liberty, it's a kill and is returned in List<Chain>
-             */
-            return false;//new List<Chain>();
+            List<Chain> kills = new List<Chain>();
+
+            // Iterate through chains of opposite color.
+            // if any have 1 liberty, it's a kill and is returned in List<Chain>
+            if (IsWhiteMove)
+                foreach (Chain chain in Game.blackChains)
+                {
+                    if (chain.Liberties.Count == 1 && chain.Liberties[0].Equals(proposedLoc))
+                        kills.Add(chain);
+                }
+            else
+                foreach (Chain chain in Game.whiteChains)
+                {
+                    if (chain.Liberties.Count == 1 && chain.Liberties[0].Equals(proposedLoc))
+                        kills.Add(chain);
+                }
+
+            return kills;
         }
 
-        // Updates lists accordingly with correct location and color.
-        public RequestResponse PlaceStone(Loc loc)
+        private IsLegalResponse determineSuicide(Loc proposedLoc, IsLegalResponse response)
         {
-            // By this point, we have MergeResult and KilledChains
-            this.Game.PossibleKoLoc = null;
+            // Does proposedLoc have any friendly neighbors?
+            List<Chain> friendlyNeighborChains = findFriendlyNeighborChains(proposedLoc);
 
-            Stone stone = new Stone(loc, IsWhiteMove);
+            if (friendlyNeighborChains.Any())
+            {
+                // If so, merge
+                friendlyNeighborChains.Add(new Chain(new Stone(proposedLoc, IsWhiteMove),
+                    this.findLiberties(proposedLoc)));
+                Chain mergeResultant = this.merge(friendlyNeighborChains);
 
-            List<Loc> liberties = findLiberties(stone.Loc);
+                if (!mergeResultant.Liberties.Any())
+                {
+                    response.Reason = ReasonEnum.Suicide;
+                    return response;
+                }
+                else
+                {
+                    response.MergeResultant = mergeResultant;
+                    response.AbsorbedInMerge = friendlyNeighborChains;
+                    return response;
+                }
+            }
+            else
+            {
+                // If not, if there are any liberties, it's playable
+                if (this.findLiberties(proposedLoc).Any())
+                {
+                    response.MergeResultant = new Chain(new Stone(proposedLoc, IsWhiteMove),
+                        this.findLiberties(proposedLoc));
+                    response.AbsorbedInMerge = new List<Chain>();
+                    return response;
+                }
+            }
 
-            Chain chain = new Chain(stone, liberties);
+            // else, it's suicide
+            response.Reason = ReasonEnum.Suicide;
+            return response;
+        }
+
+        private bool isKo(Loc proposedLoc, List<Chain> killed)
+        {
+            return proposedLoc.Equals(Game.PossibleKoLoc)
+                && killed.Count == 1
+                && killed[0].Stones.Count == 1;
+        }
+
+        private List<Chain> findFriendlyNeighborChains(Loc loc)
+        {
+            List<Chain> friendlyChains = new List<Chain>();
 
             if (IsWhiteMove)
-                this.addStoneToChains(this.Game.whiteChains, chain);
+                foreach (Chain chain in Game.whiteChains)
+                    foreach (Loc liberty in chain.Liberties)
+                    {
+                        if (liberty.Equals(loc))
+                            friendlyChains.Add(chain);
+                    }
             else
-                this.addStoneToChains(this.Game.blackChains, chain);
+                foreach (Chain chain in Game.blackChains)
+                    foreach (Loc liberty in chain.Liberties)
+                    {
+                        if (liberty.Equals(loc))
+                            friendlyChains.Add(chain);
+                    }
 
-            this.ChangeTurn();
-
-            return new RequestResponse(new Move(stone));
+            return friendlyChains;
         }
 
         private List<Loc> findLiberties(Loc loc)
@@ -164,27 +221,82 @@ namespace GoGame
             return liberties;
         }
 
-        // By this point, the move is already deemed valid, this adds the stone to the logical stone collections.
-        private void addStoneToChains(List<Chain> chainsOfLikeColor, Chain chainPlayed)
+        private Chain merge(List<Chain> chainsToMerge)
         {
-            List<Chain> chainsToMerge = new List<Chain>();
+            Chain mergeResultant = new Chain();
 
-            // for each chain of the same color with a liberty at the proposed location
-            foreach (Chain chain in chainsOfLikeColor)
-                foreach (Loc loc in chain.Liberties)
-                    if (chainPlayed.Stones.First().Loc.Equals(loc))
-                        chainsToMerge.Add(chain);
-
-            // if there are matches, merge them all
-            if (chainsToMerge.Count > 0)
+            foreach (Chain chain in chainsToMerge)
             {
-                foreach (Chain chain in chainsToMerge)
-                    chainsOfLikeColor.Remove(chain);
-
-                chainsOfLikeColor.Add(Chain.Merge(chainsToMerge));
+                mergeResultant.Stones.AddRange(chain.Stones);
+                mergeResultant.Liberties = mergeResultant.Liberties.Union(chain.Liberties).ToList();
             }
+
+            foreach (Stone stone in mergeResultant.Stones)
+                mergeResultant.Liberties.Remove(stone.Loc);
+
+            return mergeResultant;
+        }
+
+        // Updates lists accordingly with correct location and color.
+        public RequestResponse PlaceStone(Loc loc, IsLegalResponse isLegalResponse)
+        {
+            // By this point, we have MergeResult and KilledChains
+            this.Game.PossibleKoLoc = new Loc(-1, -1);
+
+            // Update logical groups of Chains by adding the mergeResult and removing what went into the merge
+            this.enactMerge(isLegalResponse.MergeResultant, isLegalResponse.AbsorbedInMerge);
+            // Update logical groups of Chains by removing the killed ones.
+            this.deadifyKilledChains(isLegalResponse.Killed);
+
+            // TODO: do I recalculate the breaths for all of the player who just played's Chains?
+
+            // Update logical groups of Opponent's Chains by removing breath for current Loc);
+            this.takeMyBreathAwaaaaay(loc);
+
+            // TODO: possibleKoLoc setting isn't right.
+            RequestResponse response = new RequestResponse(new Move(new Stone(loc, IsWhiteMove), isLegalResponse.Killed));
+
+            this.ChangeTurn();
+
+            return response;
+        }
+
+        // Actually changes logical game objects to impact game-state
+        private void enactMerge(Chain chainToAdd, List<Chain> chainsToRemove)
+        {
+            // Remove chains.
+            if (IsWhiteMove)
+                foreach (Chain chain in chainsToRemove)
+                    Game.whiteChains.Remove(chain);
             else
-                chainsOfLikeColor.Add(chainPlayed);
+                foreach (Chain chain in chainsToRemove)
+                    Game.blackChains.Remove(chain);
+
+            // Add new chain.
+            if (IsWhiteMove)
+                Game.whiteChains.Add(chainToAdd);
+            else
+                Game.blackChains.Add(chainToAdd);
+        }
+
+        private void deadifyKilledChains(List<Chain> zombies)
+        {
+            if (IsWhiteMove)
+                foreach (Chain deadChain in zombies)
+                    Game.blackChains.Remove(deadChain);
+            else
+                foreach (Chain deadChain in zombies)
+                    Game.whiteChains.Remove(deadChain);
+        }
+
+        private void takeMyBreathAwaaaaay(Loc loc)
+        {
+            if (IsWhiteMove)
+                foreach (Chain chain in Game.blackChains)
+                    chain.Liberties.Remove(loc);
+            else
+                foreach (Chain chain in Game.whiteChains)
+                    chain.Liberties.Remove(loc);
         }
     }
 }

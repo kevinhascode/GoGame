@@ -1,7 +1,5 @@
 ﻿namespace GoGame
 {
-    // TODO: change X and Y to shorts
-
     /// <summary>
     /// Used to keep track of where a stone is placed.
     /// </summary>

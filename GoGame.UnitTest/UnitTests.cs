@@ -143,7 +143,7 @@ namespace GoGame.UnitTest
          X O . .
 
          */
-        [Test] // FAILING
+        [Test]
         public void MakesGroups()
         {
             const short n = 4;
@@ -172,7 +172,7 @@ namespace GoGame.UnitTest
          X . .
 
          */
-        [Test] // FAILING
+        [Test]
         public void LibertyCount()
         {
             const short n = 3;
@@ -322,7 +322,7 @@ namespace GoGame.UnitTest
          1 O .
 
          */
-        [Test] // FAILING
+        [Test]
         public void Disallow_Suicide()
         {
             const short n = 3;
@@ -354,7 +354,7 @@ namespace GoGame.UnitTest
          X 1 X
 
          */
-        [Test] // FAILING
+        [Test]
         public void Disallow_MergeMakesSuicide()
         {
             const short n = 3;
@@ -366,11 +366,12 @@ namespace GoGame.UnitTest
             game.ProposedPlay(new Loc(2, 1)); // O
             game.ProposedPlay(new Loc(n, n)); // X: PASS
             game.ProposedPlay(new Loc(1, 1)); // O
-            game.ProposedPlay(new Loc(1, 0)); // 1
+            RequestResponse response = game.ProposedPlay(new Loc(1, 0)); // 1
 
             Assert.True(game.blackChains.Count == 2);
             Assert.True(game.whiteChains.Count == 1);
             Assert.True(game.blackChains.Count(chain => chain.Liberties.First().Equals(new Loc(1, 0))) == 2); // 2 black chains with same Liberty
+            Assert.True(response.Reason == ReasonEnum.Suicide);
 
             // TEST: Still Black's turn.
             Assert.True(!game.ProposedPlay(new Loc(1, 2)).Move.StonePlaced.IsWhite); // X
@@ -383,7 +384,7 @@ namespace GoGame.UnitTest
          X 1 X
 
          */
-        [Test] // FAILING
+        [Test]
         public void Allow_BreathPreventsSuicide()
         {
             const short n = 3;
@@ -402,7 +403,7 @@ namespace GoGame.UnitTest
 
         /* Pass + Pass => ends game. 
          */
-        [Test] // FAILING
+        [Test]
         public void PassPass_EndGame()
         {
             const short n = 2;
@@ -421,7 +422,7 @@ namespace GoGame.UnitTest
          1 3 .   2 = PASS
 
          */
-        [Test] // FAILING (EVEN IF IT'S PASSING, IT'S NOT RIGHT)
+        [Test]
         public void PassPlayPass_SameColor()
         {
             const short n = 3;

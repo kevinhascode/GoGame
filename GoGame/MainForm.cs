@@ -99,6 +99,8 @@ namespace GoGame
             }
         }
 
+        #endregion
+
         private void mainSplitContainer_Panel1_Click(object sender, EventArgs e)
         {
             int hpad, vpad, a;
@@ -119,8 +121,15 @@ namespace GoGame
             {
                 RequestResponse response = this.Game.ProposedPlay(new Loc(sqX, sqY));
 
-                if (response.Move != null)
+                if (response.Reason == ReasonEnum.Fine)
+                {
+                    // Add the stone that was played.
                     this.stonesForPainting.Add(response.Move.StonePlaced);
+                    
+                    // Remove all of the stones that were killed.
+                    foreach(Chain chain in response.Move.ChainsKilled)
+                        this.stonesForPainting.RemoveAll(stone => chain.Stones.Contains(stone));
+                }
                 else
                     switch (response.Reason)
                     {
@@ -138,8 +147,6 @@ namespace GoGame
 
             this.gamePanel.Invalidate();
         }
-
-        #endregion
 
         private void btnNewGame_Click(object sender, EventArgs e)
         {
