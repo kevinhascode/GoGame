@@ -10,130 +10,25 @@ namespace GoGame
 
         private GoGame game = new GoGame { BoardSize = 3, Handicap = 0 };
 
-        /* Would be suicide, but it's a kill... and it's not a Ko bc 2nd move kills many.
+        /* Conflict playing one stone on top of the other
+      
+         X = 1 & 2
          
-         . . . .
-         O O . .
-         1 X O .
-         O X O .
-         
-         */
-        [Test]
-        public void Allow_Kill()
-        {
-            const short n = 4;
-            game = new GoGame { BoardSize = n };
-
-            game.ProposedPlay(new Loc(1, 0)); // X
-            game.ProposedPlay(new Loc(0, 2)); // O
-            game.ProposedPlay(new Loc(1, 1)); // X
-            game.ProposedPlay(new Loc(1, 2)); // O
-            game.ProposedPlay(new Loc(n, n)); // X: PASS
-            game.ProposedPlay(new Loc(2, 1)); // O
-            game.ProposedPlay(new Loc(n, n)); // X: PASS
-            game.ProposedPlay(new Loc(2, 0)); // O
-            game.ProposedPlay(new Loc(n, n)); // X: PASS
-            game.ProposedPlay(new Loc(0, 0)); // O
-            game.ProposedPlay(new Loc(0, 1)); // 1
-
-            Assert.True(game.blackChains.Count == 1);
-            Assert.True(game.whiteChains.Count == 2);
-            Assert.True(game.PrisonersTakenByBlack == 1);
-            Assert.True(game.blackChains.First().Liberties.Count == 1);
-            Assert.True(game.blackChains.First().Liberties[0].Equals(new Loc(0, 0)));
-        }
-
-        /* Would be suicide, but the merge makes a breath.
-         
-         . . . .
-         . . . .
-         O O O .
-         X 1 X .
+         . .
+         X .
          
          */
         [Test]
-        public void Allow_MergeMakesBreath()
+        public void Disallow_StoneConflict()
         {
-            const short n = 4;
-            game = new GoGame { BoardSize = n };
+            game = new GoGame { BoardSize = 2 };
 
-            game.ProposedPlay(new Loc(0, 0)); // X
-            game.ProposedPlay(new Loc(1, 1)); // O
-            game.ProposedPlay(new Loc(2, 0)); // X
-            game.ProposedPlay(new Loc(2, 1)); // O
-            game.ProposedPlay(new Loc(n, n)); // X: PASS
-            game.ProposedPlay(new Loc(0, 1)); // O
-            game.ProposedPlay(new Loc(1, 0)); // 1
+            game.ProposedPlay(new Loc(0, 0));
 
-            Assert.True(game.blackChains.Count == 1);
-            Assert.True(game.whiteChains.Count == 1);
-            Assert.True(game.blackChains.First().Liberties.Count == 1);
-            Assert.True(game.blackChains.First().Liberties[0].Equals(new Loc(3, 0)));
-        }
+            Assert.True(game.ProposedPlay(new Loc(0, 0)).Reason == ReasonEnum.Conflict);
 
-        /* Kill.
-         
-         . . .
-         X . .
-         O 1 .
-         
-         */
-        [Test]
-        public void Kill()
-        {
-            const short n = 3;
-            game = new GoGame { BoardSize = n };
-
-            game.ProposedPlay(new Loc(0, 1)); // X
-            game.ProposedPlay(new Loc(0, 0)); // O
-            game.ProposedPlay(new Loc(1, 0)); // 1
-
-            Assert.True(game.blackChains.Count == 2);
-            Assert.True(game.whiteChains.Count == 0);
-            Assert.True(game.blackChains.First().Liberties.Count == 3);
-            Assert.True(game.PrisonersTakenByBlack == 1);
-        }
-
-        /* Ko.
-         
-         . . . .       . . . .
-         . . . .  -->  . . . .
-         X O . .       X O . .
-         O 1 O .       2 X O .
-         
-         */
-        [Test]
-        public void Ko()
-        {
-            const short n = 4;
-            game = new GoGame { BoardSize = n };
-
-            /* First Step */
-            game.ProposedPlay(new Loc(0, 1)); // X
-            game.ProposedPlay(new Loc(0, 0)); // O
-            game.ProposedPlay(new Loc(n, n)); // X: PASS
-            game.ProposedPlay(new Loc(1, 1)); // O
-            game.ProposedPlay(new Loc(n, n)); // X: PASS
-            game.ProposedPlay(new Loc(2, 0)); // O
-            RequestResponse response = game.ProposedPlay(new Loc(1, 0)); // X: 1
-
-            Assert.True(response.Move.ChainsKilled.Count == 1);             // only one group
-            Assert.True(response.Move.ChainsKilled[0].Stones.Count == 1);   // of only one stone is killed
-            Assert.True(game.PossibleKoLoc.Equals(new Loc(0, 0)));
-
-            /* Second Step */
-            response = game.ProposedPlay(new Loc(0, 0)); // O: 2
-
-            Assert.True(game.blackChains.Count == 2);
-            Assert.True(game.whiteChains.Count == 2);
-            Assert.True(response.Reason == ReasonEnum.Fine);
-            Assert.True(response.Reason == ReasonEnum.Ko);
-
-            /* Play Elsewhere */
-            response = game.ProposedPlay(new Loc(2, 2)); // O: 2, again.
-
-            Assert.True(response.Reason == ReasonEnum.Fine);
-            Assert.True(response.Move.StonePlaced.IsWhite);
+            // TEST: It's still White's turn.
+            Assert.True(game.ProposedPlay(new Loc(1, 1)).Move.StonePlaced.IsWhite);
         }
 
         /* Live normally.
@@ -225,38 +120,6 @@ namespace GoGame
             Assert.True(game.blackChains[0].Liberties.Contains(new Loc(0, 1)));
         }
 
-        /* Suicide.
-         
-         . . .
-         O . .
-         1 O .
-         
-         */
-        [Test]
-        public void Disallow_Suicide()
-        {
-            const short n = 3;
-            game = new GoGame { BoardSize = n };
-
-            game.ProposedPlay(new Loc(n, n)); // X: PASS
-            game.ProposedPlay(new Loc(0, 1)); // O
-            game.ProposedPlay(new Loc(n, n)); // X: PASS
-            game.ProposedPlay(new Loc(1, 0)); // O
-            RequestResponse response = game.ProposedPlay(new Loc(0, 0)); // 1
-
-            Assert.True(game.blackChains.Count == 0);
-            Assert.True(game.whiteChains.Count == 2);
-            Assert.True(response.Reason == ReasonEnum.Suicide);
-
-            // TEST: It's still black's turn
-            response = game.ProposedPlay(new Loc(2, 2)); // X
-            Assert.True(!response.Move.StonePlaced.IsWhite);
-
-            // TEST: White can still play there.
-            response = game.ProposedPlay(new Loc(0, 0)); // O
-            Assert.True(response.Reason == ReasonEnum.Fine);
-        }
-
         /* Makes groups.
          
          . . . .
@@ -287,38 +150,186 @@ namespace GoGame
             Assert.True(game.whiteChains.Where(chain => chain.Stones.Count == 2).First().Liberties.Count == 2); // the one with 2 stones has 2 libs
         }
 
-        /* Pass + Pass => ends game. 
-         */
-        [Test]
-        public void PassPass_EndGame()
-        {
-            const short n = 2;
-            game = new GoGame { BoardSize = n };
-
-            game.ProposedPlay(new Loc(n, n));
-            game.ProposedPlay(new Loc(n, n));
-
-            Assert.True(game.IsOver);
-        }
-
-        /* Play-Pass-Play => two stones of same color.
-         
+        /* Doesn't double-count liberties
+      
          . . .
-         . . .
-         1 3 .   2 = PASS
+         X X .
+         X . .
          
          */
         [Test]
-        public void PassPlayPass_SameColor()
+        public void LibertyCount()
         {
             const short n = 3;
             game = new GoGame { BoardSize = n };
 
-            game.ProposedPlay(new Loc(0, 0)); // 1
-            game.ProposedPlay(new Loc(n, n)); // 2: PASS
-            RequestResponse response = game.ProposedPlay(new Loc(1, 0)); // 3
+            game.ProposedPlay(new Loc(0, 0)); // X
+            game.ProposedPlay(new Loc(n, n)); // O: PASS
+            game.ProposedPlay(new Loc(0, 1)); // X
+            game.ProposedPlay(new Loc(n, n)); // O: PASS
+            game.ProposedPlay(new Loc(1, 1)); // X
 
+            // TEST: explicitly check number of groups and each groups stones and breaths.
+            Assert.True(game.blackChains.Count == 1);
+            Assert.True(game.blackChains.First().Liberties.Count == 4);
+        }
+
+        /* Kill.
+         
+         . . .
+         X . .
+         O 1 .
+         
+         */
+        [Test]
+        public void Kill()
+        {
+            const short n = 3;
+            game = new GoGame { BoardSize = n };
+
+            game.ProposedPlay(new Loc(0, 1)); // X
+            game.ProposedPlay(new Loc(0, 0)); // O
+            game.ProposedPlay(new Loc(1, 0)); // 1
+
+            Assert.True(game.blackChains.Count == 2);
+            Assert.True(game.whiteChains.Count == 0);
+            Assert.True(game.blackChains.First().Liberties.Count == 3);
+            Assert.True(game.PrisonersTakenByBlack == 1);
+        }
+
+        /* Would be suicide, but it's a kill... and it's not a Ko bc 2nd move kills many.
+         
+            . . . .
+            O O . .
+            1 X O .
+            O X O .
+         
+            */
+        [Test]
+        public void Allow_Kill()
+        {
+            const short n = 4;
+            game = new GoGame { BoardSize = n };
+
+            game.ProposedPlay(new Loc(1, 0)); // X
+            game.ProposedPlay(new Loc(0, 2)); // O
+            game.ProposedPlay(new Loc(1, 1)); // X
+            game.ProposedPlay(new Loc(1, 2)); // O
+            game.ProposedPlay(new Loc(n, n)); // X: PASS
+            game.ProposedPlay(new Loc(2, 1)); // O
+            game.ProposedPlay(new Loc(n, n)); // X: PASS
+            game.ProposedPlay(new Loc(2, 0)); // O
+            game.ProposedPlay(new Loc(n, n)); // X: PASS
+            game.ProposedPlay(new Loc(0, 0)); // O
+            game.ProposedPlay(new Loc(0, 1)); // 1
+
+            Assert.True(game.blackChains.Count == 1);
+            Assert.True(game.whiteChains.Count == 2);
+            Assert.True(game.PrisonersTakenByBlack == 1);
+            Assert.True(game.blackChains.First().Liberties.Count == 1);
+            Assert.True(game.blackChains.First().Liberties[0].Equals(new Loc(0, 0)));
+        }
+
+        /* Would be suicide, but the merge makes a breath.
+         
+         . . . .
+         . . . .
+         O O O .
+         X 1 X .
+         
+         */
+        [Test]
+        public void Allow_MergeMakesBreath()
+        {
+            const short n = 4;
+            game = new GoGame { BoardSize = n };
+
+            game.ProposedPlay(new Loc(0, 0)); // X
+            game.ProposedPlay(new Loc(1, 1)); // O
+            game.ProposedPlay(new Loc(2, 0)); // X
+            game.ProposedPlay(new Loc(2, 1)); // O
+            game.ProposedPlay(new Loc(n, n)); // X: PASS
+            game.ProposedPlay(new Loc(0, 1)); // O
+            game.ProposedPlay(new Loc(1, 0)); // 1
+
+            Assert.True(game.blackChains.Count == 1);
+            Assert.True(game.whiteChains.Count == 1);
+            Assert.True(game.blackChains.First().Liberties.Count == 1);
+            Assert.True(game.blackChains.First().Liberties[0].Equals(new Loc(3, 0)));
+        }
+
+        /* Ko.
+         
+         . . . .       . . . .
+         . . . .  -->  . . . .
+         X O . .       X O . .
+         O 1 O .       2 X O .
+         
+         */
+        [Test]
+        public void Ko()
+        {
+            const short n = 4;
+            game = new GoGame { BoardSize = n };
+
+            /* First Step */
+            game.ProposedPlay(new Loc(0, 1)); // X
+            game.ProposedPlay(new Loc(0, 0)); // O
+            game.ProposedPlay(new Loc(n, n)); // X: PASS
+            game.ProposedPlay(new Loc(1, 1)); // O
+            game.ProposedPlay(new Loc(n, n)); // X: PASS
+            game.ProposedPlay(new Loc(2, 0)); // O
+            RequestResponse response = game.ProposedPlay(new Loc(1, 0)); // X: 1
+
+            Assert.True(response.Move.ChainsKilled.Count == 1);             // only one group
+            Assert.True(response.Move.ChainsKilled[0].Stones.Count == 1);   // of only one stone is killed
+            Assert.True(game.PossibleKoLoc.Equals(new Loc(0, 0)));
+
+            /* Second Step */
+            response = game.ProposedPlay(new Loc(0, 0)); // O: 2
+
+            Assert.True(game.blackChains.Count == 2);
+            Assert.True(game.whiteChains.Count == 2);
+            Assert.True(response.Reason == ReasonEnum.Fine);
+            Assert.True(response.Reason == ReasonEnum.Ko);
+
+            /* Play Elsewhere */
+            response = game.ProposedPlay(new Loc(2, 2)); // O: 2, again.
+
+            Assert.True(response.Reason == ReasonEnum.Fine);
+            Assert.True(response.Move.StonePlaced.IsWhite);
+        }
+
+        /* Suicide.
+         
+         . . .
+         O . .
+         1 O .
+         
+         */
+        [Test]
+        public void Disallow_Suicide()
+        {
+            const short n = 3;
+            game = new GoGame { BoardSize = n };
+
+            game.ProposedPlay(new Loc(n, n)); // X: PASS
+            game.ProposedPlay(new Loc(0, 1)); // O
+            game.ProposedPlay(new Loc(n, n)); // X: PASS
+            game.ProposedPlay(new Loc(1, 0)); // O
+            RequestResponse response = game.ProposedPlay(new Loc(0, 0)); // 1
+
+            Assert.True(game.blackChains.Count == 0);
+            Assert.True(game.whiteChains.Count == 2);
+            Assert.True(response.Reason == ReasonEnum.Suicide);
+
+            // TEST: It's still black's turn
+            response = game.ProposedPlay(new Loc(2, 2)); // X
             Assert.True(!response.Move.StonePlaced.IsWhite);
+
+            // TEST: White can still play there.
+            response = game.ProposedPlay(new Loc(0, 0)); // O
+            Assert.True(response.Reason == ReasonEnum.Fine);
         }
 
         /* Merge that's a suicide.
@@ -374,49 +385,38 @@ namespace GoGame
             Assert.True(game.blackChains.First().Liberties.First().Equals(new Loc(1, 1)));
         }
 
-        /* Conflict playing one stone on top of the other
-      
-         X = 1 & 2
-         
-         . .
-         X .
-         
+        /* Pass + Pass => ends game. 
          */
         [Test]
-        public void Disallow_StoneConflict()
+        public void PassPass_EndGame()
         {
-            game = new GoGame { BoardSize = 2 };
+            const short n = 2;
+            game = new GoGame { BoardSize = n };
 
-            game.ProposedPlay(new Loc(0, 0));
+            game.ProposedPlay(new Loc(n, n));
+            game.ProposedPlay(new Loc(n, n));
 
-            Assert.True(game.ProposedPlay(new Loc(0, 0)).Reason == ReasonEnum.Conflict);
-
-            // TEST: It's still White's turn.
-            Assert.True(game.ProposedPlay(new Loc(1, 1)).Move.StonePlaced.IsWhite);
+            Assert.True(game.IsOver);
         }
 
-        /* Doesn't double-count liberties
-      
+        /* Play-Pass-Play => two stones of same color.
+         
          . . .
-         X X .
-         X . .
+         . . .
+         1 3 .   2 = PASS
          
          */
         [Test]
-        public void LibertyCount()
+        public void PassPlayPass_SameColor()
         {
             const short n = 3;
             game = new GoGame { BoardSize = n };
 
-            game.ProposedPlay(new Loc(0, 0)); // X
-            game.ProposedPlay(new Loc(n, n)); // O: PASS
-            game.ProposedPlay(new Loc(0, 1)); // X
-            game.ProposedPlay(new Loc(n, n)); // O: PASS
-            game.ProposedPlay(new Loc(1, 1)); // X
+            game.ProposedPlay(new Loc(0, 0)); // 1
+            game.ProposedPlay(new Loc(n, n)); // 2: PASS
+            RequestResponse response = game.ProposedPlay(new Loc(1, 0)); // 3
 
-            // TEST: explicitly check number of groups and each groups stones and breaths.
-            Assert.True(game.blackChains.Count == 1);
-            Assert.True(game.blackChains.First().Liberties.Count == 4);
+            Assert.True(!response.Move.StonePlaced.IsWhite);
         }
     }
 }
