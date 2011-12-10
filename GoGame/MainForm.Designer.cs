@@ -75,6 +75,7 @@
             this.btnEditContinue.TabIndex = 0;
             this.btnEditContinue.Text = "Edit / Continue";
             this.btnEditContinue.UseVisualStyleBackColor = true;
+            this.btnEditContinue.Click += new System.EventHandler(this.btnEditContinue_Click);
             // 
             // btnPass
             // 
@@ -84,6 +85,7 @@
             this.btnPass.TabIndex = 0;
             this.btnPass.Text = "Pass";
             this.btnPass.UseVisualStyleBackColor = true;
+            this.btnPass.Click += new System.EventHandler(this.btnPass_Click);
             // 
             // btnNewGame
             // 
@@ -119,26 +121,26 @@
             // newGameToolStripMenuItem
             // 
             this.newGameToolStripMenuItem.Name = "newGameToolStripMenuItem";
-            this.newGameToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.newGameToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
             this.newGameToolStripMenuItem.Text = "New Game";
             this.newGameToolStripMenuItem.Click += new System.EventHandler(this.newGameToolStripMenuItem_Click);
             // 
             // saveAsToolStripMenuItem
             // 
             this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
-            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
             this.saveAsToolStripMenuItem.Text = "// Save As...";
             // 
             // openSGFToolStripMenuItem
             // 
             this.openSGFToolStripMenuItem.Name = "openSGFToolStripMenuItem";
-            this.openSGFToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.openSGFToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
             this.openSGFToolStripMenuItem.Text = "// Open SGF";
             // 
             // settingsToolStripMenuItem
             // 
             this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
             this.settingsToolStripMenuItem.Text = "Settings";
             this.settingsToolStripMenuItem.Click += new System.EventHandler(this.settingsToolStripMenuItem_Click);
             // 

@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace GoGame
+﻿namespace GoGame
 {
     internal class RequestResponse
     {
-        internal string Reason { get; set; }
+        internal ReasonEnum Reason { get; set; }
         internal Move Move { get; set; }
 
         public RequestResponse(Move move)
@@ -15,7 +10,7 @@ namespace GoGame
             this.Move = move;
         }
 
-        public RequestResponse(string reason)
+        public RequestResponse(ReasonEnum reason)
         {
             this.Reason = reason;
         }

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace GoGame
+﻿namespace GoGame
 {
     /// <summary>
     /// Represents a stone on the board, nothing more.

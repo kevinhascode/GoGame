@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace GoGame
 {
@@ -40,23 +37,27 @@ namespace GoGame
 
         private GameLogic Logic;
 
-        private int prisonersTakenByWhite { get; set; }
-        private int prisonersTakenByBlack { get; set; }
+        internal bool IsOver;
+
+        internal int PrisonersTakenByWhite { get; private set; }
+        internal int PrisonersTakenByBlack { get; private set; }
+
+        internal Loc PossibleKoLoc { get; private set; }
 
         public GoGame()
         {
             this.boardSize = Properties.Settings.Default.BoardSize;
             this.handicap = Properties.Settings.Default.Handicap;
-            this.prisonersTakenByWhite = 0;
-            this.prisonersTakenByBlack = 0;
+            this.PrisonersTakenByWhite = 0;
+            this.PrisonersTakenByBlack = 0;
 
             this.Logic = new GameLogic(this);
         }
 
         internal void Reset()
         {
-            this.prisonersTakenByWhite = 0;
-            this.prisonersTakenByBlack = 0;
+            this.PrisonersTakenByWhite = 0;
+            this.PrisonersTakenByBlack = 0;
             this.whiteChains.Clear();
             this.blackChains.Clear();
 
@@ -70,7 +71,7 @@ namespace GoGame
             if (this.Logic.IsLegal(loc))
                 return this.Logic.PlaceStone(loc);
             else
-                return new RequestResponse("Can't play there.");
+                return new RequestResponse(ReasonEnum.Conflict);
         }
     }
 }

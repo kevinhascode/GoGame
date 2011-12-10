@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using System.Drawing.Drawing2D;
 
@@ -113,16 +109,6 @@ namespace GoGame
             int sqX = (X - hpad) / a;
             int sqY = (Y - vpad) / a;
 
-            #region DEBUG code
-
-            //using (Graphics g = gamePanel.CreateGraphics())
-            //{
-            //    g.DrawRectangle(Pens.Red, X - 5, Y - 5, 10, 10);
-            //}
-            //MessageBox.Show(String.Format("clickLoc:: X: {0} Y: {1}\r\nI think this is square:({2},{3})", X, Y, sqX, sqY));
-
-            #endregion
-
             // takes care of clicks to the right of (or below) the grid
             if (sqX >= this.Game.BoardSize || sqY >= this.Game.BoardSize)
                 return;
@@ -136,7 +122,18 @@ namespace GoGame
                 if (response.Move != null)
                     this.stonesForPainting.Add(response.Move.StonePlaced);
                 else
-                    MessageBox.Show(response.Reason);
+                    switch (response.Reason)
+                    {
+                        case ReasonEnum.Conflict:
+                            MessageBox.Show("Illegal: Can't play on top of another stone.", "I don't think so!");
+                            break;
+                        case ReasonEnum.Ko:
+                            MessageBox.Show("Illegal: Ko move.", "I don't think so!");
+                            break;
+                        case ReasonEnum.Suicide:
+                            MessageBox.Show("Illegal: Can't commit suicide.", "I don't think so!");
+                            break;
+                    }
             }
 
             this.gamePanel.Invalidate();
@@ -162,5 +159,15 @@ namespace GoGame
         }
 
         #endregion
+
+        private void btnPass_Click(object sender, EventArgs e)
+        {
+            this.Game.ProposedPlay(new Loc(this.Game.BoardSize, this.Game.BoardSize));
+        }
+
+        private void btnEditContinue_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

@@ -69,6 +69,7 @@
     <Compile Include="Move.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ReasonEnum.cs" />
     <Compile Include="RequestResponse.cs" />
     <Compile Include="Stone.cs" />
     <Compile Include="UnitTests.cs" />

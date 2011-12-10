@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace GoGame
+﻿namespace GoGame
 {
+    // TODO: change X and Y to shorts
+
     /// <summary>
     /// Used to keep track of where a stone is placed.
     /// </summary>

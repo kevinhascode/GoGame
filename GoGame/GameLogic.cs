@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace GoGame
 {
@@ -39,7 +36,7 @@ namespace GoGame
             else
                 return false;
         }
-        
+
         /* The next best thing to a picture in the source code.
          
                    IsValid()
