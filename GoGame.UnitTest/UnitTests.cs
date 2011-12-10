@@ -1,14 +1,28 @@
 ﻿using System.Linq;
 using NUnit.Framework;
 
-namespace GoGame
+namespace GoGame.UnitTest
 {
     [TestFixture]
-    internal class UnitTests
+    public class UnitTests
     {
         // X is Black (and Odd #s), O is White (and Even #s).
+        private short handicap;
 
-        private GoGame game = new GoGame { BoardSize = 3, Handicap = 0 };
+        // backup handicap
+        [TestFixtureSetUp]
+        public void SetUp()
+        {
+            this.handicap = new GoGame().Handicap;
+            new GoGame().Handicap = 0;
+        }
+
+        // restore handicap
+        [TestFixtureTearDown]
+        public void TearDown()
+        {
+            new GoGame().Handicap = this.handicap;
+        }
 
         /* Conflict playing one stone on top of the other
       
@@ -21,7 +35,8 @@ namespace GoGame
         [Test]
         public void Disallow_StoneConflict()
         {
-            game = new GoGame { BoardSize = 2 };
+            short n = 2;
+            GoGame game = new GoGame { BoardSize = n };
 
             game.ProposedPlay(new Loc(0, 0));
 
@@ -41,8 +56,8 @@ namespace GoGame
         [Test]
         public void Live()
         {
-            const short n = 3;
-            game = new GoGame { BoardSize = n };
+            short n = 3;
+            GoGame game = new GoGame { BoardSize = n };
 
             game.ProposedPlay(new Loc(1, 1));
 
@@ -65,8 +80,8 @@ namespace GoGame
         [Test]
         public void LiveEdge()
         {
-            const short n = 3;
-            game = new GoGame { BoardSize = n };
+            short n = 3;
+            GoGame game = new GoGame { BoardSize = n };
 
             game.ProposedPlay(new Loc(0, 1));
 
@@ -88,7 +103,7 @@ namespace GoGame
         public void LiveCorner()
         {
             const short n = 2;
-            game = new GoGame { BoardSize = n };
+            GoGame game = new GoGame { BoardSize = n };
 
             game.ProposedPlay(new Loc(0, 0));
 
@@ -109,7 +124,7 @@ namespace GoGame
         public void LiveOtherCorner()
         {
             const short n = 2;
-            game = new GoGame { BoardSize = n };
+            GoGame game = new GoGame { BoardSize = n };
 
             game.ProposedPlay(new Loc(1, 1));
 
@@ -121,18 +136,18 @@ namespace GoGame
         }
 
         /* Makes groups.
-         
+
          . . . .
          . X O .
          X O . .
          X O . .
-         
+
          */
-        [Test]
+        [Test] // FAILING
         public void MakesGroups()
         {
             const short n = 4;
-            game = new GoGame { BoardSize = n };
+            GoGame game = new GoGame { BoardSize = n };
 
             game.ProposedPlay(new Loc(0, 0)); // X
             game.ProposedPlay(new Loc(1, 0)); // O
@@ -151,17 +166,17 @@ namespace GoGame
         }
 
         /* Doesn't double-count liberties
-      
+
          . . .
          X X .
          X . .
-         
+
          */
-        [Test]
+        [Test] // FAILING
         public void LibertyCount()
         {
             const short n = 3;
-            game = new GoGame { BoardSize = n };
+            GoGame game = new GoGame { BoardSize = n };
 
             game.ProposedPlay(new Loc(0, 0)); // X
             game.ProposedPlay(new Loc(n, n)); // O: PASS
@@ -175,17 +190,17 @@ namespace GoGame
         }
 
         /* Kill.
-         
+
          . . .
          X . .
          O 1 .
-         
+
          */
-        [Test]
+        [Test] // FAILING
         public void Kill()
         {
             const short n = 3;
-            game = new GoGame { BoardSize = n };
+            GoGame game = new GoGame { BoardSize = n };
 
             game.ProposedPlay(new Loc(0, 1)); // X
             game.ProposedPlay(new Loc(0, 0)); // O
@@ -198,18 +213,18 @@ namespace GoGame
         }
 
         /* Would be suicide, but it's a kill... and it's not a Ko bc 2nd move kills many.
-         
+
             . . . .
             O O . .
             1 X O .
             O X O .
-         
+
             */
-        [Test]
+        [Test] // FAILING
         public void Allow_Kill()
         {
             const short n = 4;
-            game = new GoGame { BoardSize = n };
+            GoGame game = new GoGame { BoardSize = n };
 
             game.ProposedPlay(new Loc(1, 0)); // X
             game.ProposedPlay(new Loc(0, 2)); // O
@@ -231,18 +246,18 @@ namespace GoGame
         }
 
         /* Would be suicide, but the merge makes a breath.
-         
+
          . . . .
          . . . .
          O O O .
          X 1 X .
-         
+
          */
-        [Test]
+        [Test] // FAILING
         public void Allow_MergeMakesBreath()
         {
             const short n = 4;
-            game = new GoGame { BoardSize = n };
+            GoGame game = new GoGame { BoardSize = n };
 
             game.ProposedPlay(new Loc(0, 0)); // X
             game.ProposedPlay(new Loc(1, 1)); // O
@@ -259,18 +274,18 @@ namespace GoGame
         }
 
         /* Ko.
-         
+
          . . . .       . . . .
          . . . .  -->  . . . .
          X O . .       X O . .
          O 1 O .       2 X O .
-         
+
          */
-        [Test]
+        [Test] // FAILING
         public void Ko()
         {
             const short n = 4;
-            game = new GoGame { BoardSize = n };
+            GoGame game = new GoGame { BoardSize = n };
 
             /* First Step */
             game.ProposedPlay(new Loc(0, 1)); // X
@@ -301,17 +316,17 @@ namespace GoGame
         }
 
         /* Suicide.
-         
+
          . . .
          O . .
          1 O .
-         
+
          */
-        [Test]
+        [Test] // FAILING
         public void Disallow_Suicide()
         {
             const short n = 3;
-            game = new GoGame { BoardSize = n };
+            GoGame game = new GoGame { BoardSize = n };
 
             game.ProposedPlay(new Loc(n, n)); // X: PASS
             game.ProposedPlay(new Loc(0, 1)); // O
@@ -333,17 +348,17 @@ namespace GoGame
         }
 
         /* Merge that's a suicide.
-         
+
          . . .
          O O O
          X 1 X
-         
+
          */
-        [Test]
+        [Test] // FAILING
         public void Disallow_MergeMakesSuicide()
         {
             const short n = 3;
-            game = new GoGame { BoardSize = n };
+            GoGame game = new GoGame { BoardSize = n };
 
             game.ProposedPlay(new Loc(0, 0)); // X
             game.ProposedPlay(new Loc(0, 1)); // O
@@ -362,17 +377,17 @@ namespace GoGame
         }
 
         /* Not a suicide bc adds a new breath.
-         
+
          . . .
          O . O
          X 1 X
-         
+
          */
-        [Test]
+        [Test] // FAILING
         public void Allow_BreathPreventsSuicide()
         {
             const short n = 3;
-            game = new GoGame { BoardSize = n };
+            GoGame game = new GoGame { BoardSize = n };
 
             game.ProposedPlay(new Loc(0, 0)); // X
             game.ProposedPlay(new Loc(0, 1)); // O
@@ -387,11 +402,11 @@ namespace GoGame
 
         /* Pass + Pass => ends game. 
          */
-        [Test]
+        [Test] // FAILING
         public void PassPass_EndGame()
         {
             const short n = 2;
-            game = new GoGame { BoardSize = n };
+            GoGame game = new GoGame { BoardSize = n };
 
             game.ProposedPlay(new Loc(n, n));
             game.ProposedPlay(new Loc(n, n));
@@ -400,17 +415,17 @@ namespace GoGame
         }
 
         /* Play-Pass-Play => two stones of same color.
-         
+
          . . .
          . . .
          1 3 .   2 = PASS
-         
+
          */
-        [Test]
+        [Test] // FAILING (EVEN IF IT'S PASSING, IT'S NOT RIGHT)
         public void PassPlayPass_SameColor()
         {
             const short n = 3;
-            game = new GoGame { BoardSize = n };
+            GoGame game = new GoGame { BoardSize = n };
 
             game.ProposedPlay(new Loc(0, 0)); // 1
             game.ProposedPlay(new Loc(n, n)); // 2: PASS

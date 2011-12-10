@@ -5,10 +5,13 @@ namespace GoGame
     /// <summary>
     /// An instance of a game of Go.
     /// </summary>
-    internal class GoGame
+    public class GoGame
     {
+        private GameLogic Logic;
+        public bool IsOver; // TODO: implement this for real... just exists for UnitTest right now.
+
         private short boardSize;
-        internal short BoardSize
+        public short BoardSize
         {
             get
             { return this.boardSize; }
@@ -21,7 +24,7 @@ namespace GoGame
         }
 
         private short handicap;
-        internal short Handicap
+        public short Handicap
         {
             get { return this.handicap; }
             set
@@ -32,17 +35,31 @@ namespace GoGame
             }
         }
 
-        internal readonly List<Chain> whiteChains = new List<Chain>();
-        internal readonly List<Chain> blackChains = new List<Chain>();
+        public readonly List<Chain> whiteChains = new List<Chain>();
+        public readonly List<Chain> blackChains = new List<Chain>();
 
-        private GameLogic Logic;
+        public List<Loc> LocsPlayed
+        {
+            get
+            {
+                List<Loc> played = new List<Loc>();
 
-        internal bool IsOver;
+                foreach (Chain chain in whiteChains)
+                    foreach (Stone stone in chain.Stones)
+                        played.Add(stone.Loc);
 
-        internal int PrisonersTakenByWhite { get; private set; }
-        internal int PrisonersTakenByBlack { get; private set; }
+                foreach (Chain chain in blackChains)
+                    foreach (Stone stone in chain.Stones)
+                        played.Add(stone.Loc);
 
-        internal Loc PossibleKoLoc { get; private set; }
+                return played;
+            }
+        }
+
+        public int PrisonersTakenByWhite { get; private set; }
+        public int PrisonersTakenByBlack { get; private set; }
+
+        public Loc PossibleKoLoc { get; set; }
 
         public GoGame()
         {
@@ -54,20 +71,18 @@ namespace GoGame
             this.Logic = new GameLogic(this);
         }
 
-        internal void Reset()
+        public void Reset()
         {
             this.PrisonersTakenByWhite = 0;
             this.PrisonersTakenByBlack = 0;
             this.whiteChains.Clear();
             this.blackChains.Clear();
 
-            GameLogic.Reset(this);
+            this.Logic.Reset(this);
         }
 
-        internal RequestResponse ProposedPlay(Loc loc)
+        public RequestResponse ProposedPlay(Loc loc)
         {
-            //TODO: If there is a kill, and it's 1 chain, w/ one stone, possibleKoLoc = loc
-
             if (this.Logic.IsLegal(loc))
                 return this.Logic.PlaceStone(loc);
             else

@@ -3,10 +3,10 @@
     /// <summary>
     /// Represents a stone on the board, nothing more.
     /// </summary>
-    internal class Stone
+    public class Stone
     {
-        internal Loc Loc { get; set; }
-        internal bool IsWhite { get; set; }
+        public Loc Loc { get; set; }
+        public bool IsWhite { get; set; }
 
         public Stone(Loc loc, bool isWhite)
         {

@@ -3,12 +3,12 @@ using System.Linq;
 
 namespace GoGame
 {
-    internal class Chain
+    public class Chain
     {
-        internal readonly List<Stone> Stones;
-        internal List<Loc> Liberties { get; set; }
+        public readonly List<Stone> Stones;
+        public List<Loc> Liberties { get; set; }
 
-        internal bool IsWhite
+        public bool IsWhite
         {
             get { return this.Stones.First().IsWhite; }
         }
@@ -19,14 +19,15 @@ namespace GoGame
             this.Liberties = new List<Loc>();
         }
 
-        public Chain(Stone stone)
+        public Chain(Stone stone, List<Loc> liberties)
             : this()
         {
             this.Stones.Add(stone);
+            this.Liberties = liberties;
         }
 
         // Convenience method for merging multiple chains
-        internal static Chain Merge(List<Chain> chains)
+        public static Chain Merge(List<Chain> chains)
         {
             Chain toReturn = new Chain();
 

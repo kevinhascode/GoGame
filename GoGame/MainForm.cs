@@ -8,8 +8,8 @@ namespace GoGame
 {
     public partial class MainForm : Form
     {
-        // internal so it's reachable from GameSettingsForm
-        internal GoGame Game;
+        // public so it's reachable from GameSettingsForm
+        public GoGame Game;
         // Field will only be used for painting purposes. Yes, that means maintaining two separate lists of plays.
         // One of stones for painting and one of chains for logical purposes.
         private readonly List<Stone> stonesForPainting = new List<Stone>();
@@ -24,7 +24,7 @@ namespace GoGame
         }
 
         // Resets Form's part of the game
-        internal void NewGame()
+        public void NewGame()
         {
             this.gamePanel.Invalidate();
 

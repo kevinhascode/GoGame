@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace GoGame
 {
@@ -6,29 +7,30 @@ namespace GoGame
     /// All of the logic about making moves are to be written here.
     /// Anything that's calculation-based or was written in any way as a convenience.
     /// </summary>
-    internal class GameLogic
+    public class GameLogic
     {
-        internal static bool IsWhiteMove { get; set; }
+        public bool IsWhiteMove { get; set; }
 
         private GoGame Game;
 
         public GameLogic(GoGame game)
         {
-            this.Game = game;
+            Reset(game);
         }
 
-        internal static void Reset(GoGame game)
+        public void Reset(GoGame game)
         {
+            Game = game;
             IsWhiteMove = (game.Handicap > 0);
         }
 
-        internal static void ChangeTurn()
+        public void ChangeTurn()
         {
             IsWhiteMove = !IsWhiteMove;
         }
 
         // Checks on legality of move.
-        internal bool IsLegal(Loc proposedLoc)
+        public bool IsLegal(Loc proposedLoc)
         {
             // TODO: would like to return RequestResponse from here, but not sure how it should look
             if (isNotConflict(proposedLoc))
@@ -51,7 +53,7 @@ namespace GoGame
          */
 
         // TODO: from jotted down notes
-        //internal Move IsValid(Loc loc)
+        //public Move IsValid(Loc loc)
         //{
         //    List<Chain> chain = isKill(loc);
 
@@ -87,31 +89,63 @@ namespace GoGame
         }
 
         // Updates lists accordingly with correct location and color.
-        internal RequestResponse PlaceStone(Loc loc)
+        public RequestResponse PlaceStone(Loc loc)
         {
             // By this point, we have MergeResult and KilledChains
+            this.Game.PossibleKoLoc = null;
 
             Stone stone = new Stone(loc, IsWhiteMove);
 
-            if (IsWhiteMove)
-                this.addStoneToChains(this.Game.whiteChains, stone);
-            else
-                this.addStoneToChains(this.Game.blackChains, stone);
+            List<Loc> liberties = findLiberties(stone.Loc);
 
-            GameLogic.ChangeTurn();
+            Chain chain = new Chain(stone, liberties);
+
+            if (IsWhiteMove)
+                this.addStoneToChains(this.Game.whiteChains, chain);
+            else
+                this.addStoneToChains(this.Game.blackChains, chain);
+
+            this.ChangeTurn();
 
             return new RequestResponse(new Move(stone));
         }
 
+        private List<Loc> findLiberties(Loc loc)
+        {
+            List<Loc> liberties = new List<Loc>();
+
+            // Check Left.
+            Loc left = new Loc(loc.X - 1, loc.Y);
+            if (loc.X > 0 && !Game.LocsPlayed.Contains(left))
+                liberties.Add(left);
+
+            // Check Right.
+            Loc right = new Loc(loc.X + 1, loc.Y);
+            if (loc.X < Game.BoardSize - 1 && !Game.LocsPlayed.Contains(right))
+                liberties.Add(right);
+
+            // Check Up.
+            Loc up = new Loc(loc.X, loc.Y - 1);
+            if (loc.Y > 0 && !Game.LocsPlayed.Contains(up))
+                liberties.Add(up);
+
+            // Check Down.
+            Loc down = new Loc(loc.X, loc.Y + 1);
+            if (loc.Y < Game.BoardSize - 1 && !Game.LocsPlayed.Contains(down))
+                liberties.Add(down);
+
+            return liberties;
+        }
+
         // By this point, the move is already deemed valid, this adds the stone to the logical stone collections.
-        private void addStoneToChains(List<Chain> chainsOfLikeColor, Stone stone)
+        private void addStoneToChains(List<Chain> chainsOfLikeColor, Chain chainPlayed)
         {
             List<Chain> chainsToMerge = new List<Chain>();
 
             // for each chain of the same color with a liberty at the proposed location
             foreach (Chain chain in chainsOfLikeColor)
                 foreach (Loc loc in chain.Liberties)
-                    if (stone.Loc.Equals(loc))
+                    if (chainPlayed.Stones.First().Loc.Equals(loc))
                         chainsToMerge.Add(chain);
 
             // if there are matches, merge them all
@@ -123,7 +157,7 @@ namespace GoGame
                 chainsOfLikeColor.Add(Chain.Merge(chainsToMerge));
             }
             else
-                chainsOfLikeColor.Add(new Chain(stone));
+                chainsOfLikeColor.Add(chainPlayed);
         }
     }
 }

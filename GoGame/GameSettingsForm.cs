@@ -4,7 +4,7 @@ using System.Windows.Forms;
 
 namespace GoGame
 {
-    internal partial class GameSettingsForm : Form
+    public partial class GameSettingsForm : Form
     {
         private MainForm mainForm;
         private string lastGoodSize, lastGoodHandicap;
@@ -14,7 +14,7 @@ namespace GoGame
         private static readonly string[] smallHandicapRange = new string[] { "0", "2", "3", "4", "5" };
         private static readonly string[] largeHandicapRange = new string[] { "0", "2", "3", "4", "5", "6", "7", "8", "9" };
 
-        internal GameSettingsForm(MainForm mainForm)
+        public GameSettingsForm(MainForm mainForm)
         {
             this.mainForm = mainForm;
 

@@ -2,10 +2,10 @@
 
 namespace GoGame
 {
-    internal class Move
+    public class Move
     {
-        internal readonly Stone StonePlaced;
-        internal readonly List<Chain> ChainsKilled;
+        public readonly Stone StonePlaced;
+        public readonly List<Chain> ChainsKilled;
 
         public Move(Stone stonePlaced)
         {

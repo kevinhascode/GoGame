@@ -1,9 +1,9 @@
 ﻿namespace GoGame
 {
-    internal class RequestResponse
+    public class RequestResponse
     {
-        internal ReasonEnum Reason { get; set; }
-        internal Move Move { get; set; }
+        public ReasonEnum Reason { get; set; }
+        public Move Move { get; set; }
 
         public RequestResponse(Move move)
         {
