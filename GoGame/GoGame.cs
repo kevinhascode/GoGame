@@ -93,7 +93,6 @@ namespace GoGame
             this.Logic.Reset(this);
         }
 
-        // TODO: implement PASSing
         public RequestResponse ProposedPlay(Loc loc)
         {
             // if it's ==, then it's a PASS

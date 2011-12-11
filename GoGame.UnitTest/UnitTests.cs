@@ -283,7 +283,7 @@ namespace GoGame.UnitTest
          O 1 O .       2 X O .
 
          */
-        [Test] // FAILING
+        [Test]
         public void Ko()
         {
             const short n = 4;
@@ -307,7 +307,6 @@ namespace GoGame.UnitTest
 
             Assert.True(game.blackChains.Count == 2);
             Assert.True(game.whiteChains.Count == 2);
-            Assert.True(response.Reason == ReasonEnum.Fine);
             Assert.True(response.Reason == ReasonEnum.Ko);
 
             /* Play Elsewhere */

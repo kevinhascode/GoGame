@@ -92,11 +92,11 @@ namespace GoGame
 
         private bool isConflict(Loc proposedLoc)
         {
-            return this.isConflictHelper(this.Game.blackChains, proposedLoc)
-                || this.isConflictHelper(this.Game.whiteChains, proposedLoc);
+            return GameLogic.isConflictHelper(this.Game.blackChains, proposedLoc)
+                || GameLogic.isConflictHelper(this.Game.whiteChains, proposedLoc);
         }
 
-        private bool isConflictHelper(List<Chain> chainsOfLikeColor, Loc proposedLoc)
+        private static bool isConflictHelper(List<Chain> chainsOfLikeColor, Loc proposedLoc)
         {
             foreach (Chain chain in chainsOfLikeColor)
                 foreach (Stone stone in chain.Stones)
@@ -279,7 +279,7 @@ namespace GoGame
             // Update logical groups of Opponent's Chains by removing breath for current Loc
             this.takeMyBreathAwaaaaay(loc);
 
-            // Set possibleKoLoc. ... TODO: unfuck Ko Logic
+            // Set possibleKoLoc.
             if (isLegalResponse.Killed.Count == 1
                 && isLegalResponse.Killed[0].Stones.Count == 1)
             {
