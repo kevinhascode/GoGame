@@ -33,12 +33,16 @@ namespace GoGame
 
             this.Game = new GoGame();
 
+            //TODO: remove Hoshi
+            //TODO: add Hoshi
+
             //repaint
             mainSplitContainer_Panel1_Paint(this, null);
         }
 
         #region Painting code...
 
+        // TODO: (FUNC)(PERF) overhaul this so I'm not painting 2 to 4 lines per label, but instead painting BoardHeight * 2 lines across the entire board.
         private void paintSquares()
         {
             int hpad, vpad, a;
@@ -97,6 +101,67 @@ namespace GoGame
                 hpad = 0;
                 vpad = Math.Abs(W - H) / 2;
             }
+        }
+
+        /* Logic for where to paint Hoshi
+         * Size:    Hoshi:
+         * 2-4      NONE
+         * 5        1
+         * 6        NONE
+         * 7        1
+         * 8-11     4 OR 5
+         * 12-19    4 OR 9
+         */
+        private void addHoshi()
+        {
+            if (this.Game.BoardSize >= 12)
+            {
+                int b = this.Game.BoardSize - 4;
+                //this.gameGrid[3, 3].Paint += new PaintEventHandler(this.gameGrid[3, 3].PaintHoshi);
+                //this.gameGrid[3, b].Paint += new PaintEventHandler(this.gameGrid[3, b].PaintHoshi);
+                //this.gameGrid[b, 3].Paint += new PaintEventHandler(this.gameGrid[b, 3].PaintHoshi);
+                //this.gameGrid[b, b].Paint += new PaintEventHandler(this.gameGrid[b, b].PaintHoshi);
+
+                if (this.Game.BoardSize % 2 != 0)
+                {   // if odd
+                    int c = this.Game.BoardSize / 2;
+                    //this.gameGrid[c, 3].Paint += new PaintEventHandler(this.gameGrid[c, c].PaintHoshi);
+                    //this.gameGrid[b, c].Paint += new PaintEventHandler(this.gameGrid[3, 3].PaintHoshi);
+                    //this.gameGrid[c, b].Paint += new PaintEventHandler(this.gameGrid[3, b].PaintHoshi);
+                    //this.gameGrid[3, c].Paint += new PaintEventHandler(this.gameGrid[b, 3].PaintHoshi);
+                    //this.gameGrid[c, c].Paint += new PaintEventHandler(this.gameGrid[b, b].PaintHoshi);
+                }
+
+                return;
+            }
+            if (this.Game.BoardSize >= 8)
+            {
+                int b = this.Game.BoardSize - 3;
+                //this.gameGrid[2, 2].Paint += new PaintEventHandler(this.gameGrid[2, 2].PaintHoshi);
+                //this.gameGrid[2, b].Paint += new PaintEventHandler(this.gameGrid[2, b].PaintHoshi);
+                //this.gameGrid[b, 2].Paint += new PaintEventHandler(this.gameGrid[b, 2].PaintHoshi);
+                //this.gameGrid[b, b].Paint += new PaintEventHandler(this.gameGrid[b, b].PaintHoshi);
+
+                if (this.Game.BoardSize % 2 != 0)
+                {   // if odd         
+                    int c = this.Game.BoardSize / 2;
+                    //this.gameGrid[c, c].Paint += new PaintEventHandler(this.gameGrid[c, c].PaintHoshi);
+                }
+
+                return;
+            }
+            if (this.Game.BoardSize == 5 || this.Game.BoardSize == 7)
+            {
+                int c = this.Game.BoardSize / 2;
+                //this.gameGrid[c, c].Paint += new PaintEventHandler(this.gameGrid[c, c].PaintHoshi);
+                return;
+            }
+
+        }
+
+        private void PaintHoshi(object sender, PaintEventArgs e)
+        {
+            //e.Graphics.FillRectangle(Brushes.Black, this.Width / 2 - 2, this.Height / 2 - 2, 5, 5);
         }
 
         #endregion
