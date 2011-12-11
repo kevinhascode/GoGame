@@ -73,6 +73,11 @@ namespace GoGame
                         response.MergeResultant = this.merge(friendlyNeighborChains);
                         response.AbsorbedInMerge = friendlyNeighborChains;
                     }
+                    else
+                    {
+                        response.MergeResultant = new Chain(new Stone(proposedLoc, IsWhiteMove), this.findLiberties(proposedLoc));
+                        response.AbsorbedInMerge = new List<Chain>();
+                    }
 
                     return response;
                 }
@@ -132,8 +137,7 @@ namespace GoGame
             if (friendlyNeighborChains.Any())
             {
                 // If so, merge
-                friendlyNeighborChains.Add(new Chain(new Stone(proposedLoc, IsWhiteMove),
-                    this.findLiberties(proposedLoc)));
+                friendlyNeighborChains.Add(new Chain(new Stone(proposedLoc, IsWhiteMove), this.findLiberties(proposedLoc)));
                 Chain mergeResultant = this.merge(friendlyNeighborChains);
 
                 if (!mergeResultant.Liberties.Any())
@@ -272,7 +276,7 @@ namespace GoGame
                     this.reCalcLiberties(chain);
             }
 
-            // Update logical groups of Opponent's Chains by removing breath for current Loc);)
+            // Update logical groups of Opponent's Chains by removing breath for current Loc
             this.takeMyBreathAwaaaaay(loc);
 
             // Set possibleKoLoc. ... TODO: unfuck Ko Logic
@@ -292,7 +296,7 @@ namespace GoGame
         // Actually changes logical game objects to impact game-state
         private void enactMerge(Chain chainToAdd, List<Chain> chainsToRemove)
         {
-            // Remove chains.
+            // Remove chains that existed prior.
             if (IsWhiteMove)
                 foreach (Chain chain in chainsToRemove)
                     Game.whiteChains.Remove(chain);

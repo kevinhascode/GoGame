@@ -207,6 +207,8 @@ namespace GoGame.UnitTest
             game.ProposedPlay(new Loc(1, 0)); // 1
 
             Assert.True(game.blackChains.Count == 2);
+            Assert.True(game.blackChains[0].Stones.Count == 1);
+            Assert.True(game.blackChains[1].Stones.Count == 1);
             Assert.True(game.whiteChains.Count == 0);
             Assert.True(game.blackChains.First().Liberties.Count == 3);
             Assert.True(game.PrisonersTakenByBlack == 1);
