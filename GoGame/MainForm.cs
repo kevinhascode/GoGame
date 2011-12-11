@@ -125,10 +125,11 @@ namespace GoGame
                 {
                     // Add the stone that was played.
                     this.stonesForPainting.Add(response.Move.StonePlaced);
-                    
+
                     // Remove all of the stones that were killed.
-                    foreach(Chain chain in response.Move.ChainsKilled)
-                        this.stonesForPainting.RemoveAll(stone => chain.Stones.Contains(stone));
+                    foreach (Chain chainKilled in response.Move.ChainsKilled)
+                        foreach (Stone stoneKilled in chainKilled.Stones)
+                            this.stonesForPainting.Remove(this.stonesForPainting.Find(paintedStone => paintedStone.Loc.Equals(stoneKilled.Loc)));
                 }
                 else
                     switch (response.Reason)

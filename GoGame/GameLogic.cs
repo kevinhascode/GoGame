@@ -124,7 +124,7 @@ namespace GoGame
             return kills;
         }
 
-        private IsLegalResponse determineSuicide(Loc proposedLoc, IsLegalResponse response)
+        private void determineSuicide(Loc proposedLoc, IsLegalResponse response)
         {
             // Does proposedLoc have any friendly neighbors?
             List<Chain> friendlyNeighborChains = findFriendlyNeighborChains(proposedLoc);
@@ -139,13 +139,13 @@ namespace GoGame
                 if (!mergeResultant.Liberties.Any())
                 {
                     response.Reason = ReasonEnum.Suicide;
-                    return response;
+                    return;
                 }
                 else
                 {
                     response.MergeResultant = mergeResultant;
                     response.AbsorbedInMerge = friendlyNeighborChains;
-                    return response;
+                    return;
                 }
             }
             else
@@ -156,13 +156,12 @@ namespace GoGame
                     response.MergeResultant = new Chain(new Stone(proposedLoc, IsWhiteMove),
                         this.findLiberties(proposedLoc));
                     response.AbsorbedInMerge = new List<Chain>();
-                    return response;
+                    return;
                 }
             }
 
             // else, it's suicide
             response.Reason = ReasonEnum.Suicide;
-            return response;
         }
 
         private bool isKo(Loc proposedLoc, List<Chain> killed)
