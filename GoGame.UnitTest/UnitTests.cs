@@ -196,7 +196,7 @@ namespace GoGame.UnitTest
          O 1 .
 
          */
-        [Test] // FAILING
+        [Test]
         public void Kill()
         {
             const short n = 3;
@@ -220,7 +220,7 @@ namespace GoGame.UnitTest
             O X O .
 
             */
-        [Test] // FAILING
+        [Test]
         public void Allow_Kill()
         {
             const short n = 4;
@@ -253,7 +253,7 @@ namespace GoGame.UnitTest
          X 1 X .
 
          */
-        [Test] // FAILING
+        [Test]
         public void Allow_MergeMakesBreath()
         {
             const short n = 4;

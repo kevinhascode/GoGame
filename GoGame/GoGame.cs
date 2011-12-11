@@ -67,8 +67,8 @@ namespace GoGame
             }
         }
 
-        public int PrisonersTakenByWhite { get; private set; }
-        public int PrisonersTakenByBlack { get; private set; }
+        public int PrisonersTakenByWhite { get; set; }
+        public int PrisonersTakenByBlack { get; set; }
 
         public Loc PossibleKoLoc = new Loc(-1, -1);
         public bool LastWasPass;

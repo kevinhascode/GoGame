@@ -221,6 +221,16 @@ namespace GoGame
             return liberties;
         }
 
+        private void reCalcLiberties(Chain chain)
+        {
+            List<Loc> liberties = new List<Loc>();
+
+            foreach (Stone stone in chain.Stones)
+                liberties = liberties.Union(findLiberties(stone.Loc)).ToList();
+
+            chain.Liberties = liberties;
+        }
+
         private Chain merge(List<Chain> chainsToMerge)
         {
             Chain mergeResultant = new Chain();
@@ -248,12 +258,31 @@ namespace GoGame
             // Update logical groups of Chains by removing the killed ones.
             this.deadifyKilledChains(isLegalResponse.Killed);
 
-            // TODO: do I recalculate the breaths for all of the player who just played's Chains?
+            if (IsWhiteMove)
+            {
+                this.Game.PrisonersTakenByWhite += isLegalResponse.Killed.Sum(chain => chain.Stones.Count);
 
-            // Update logical groups of Opponent's Chains by removing breath for current Loc);
+                foreach (Chain chain in this.Game.whiteChains)
+                    this.reCalcLiberties(chain);
+            }
+            else
+            {
+                this.Game.PrisonersTakenByBlack += isLegalResponse.Killed.Sum(chain => chain.Stones.Count);
+
+                foreach (Chain chain in this.Game.blackChains)
+                    this.reCalcLiberties(chain);
+            }
+
+            // Update logical groups of Opponent's Chains by removing breath for current Loc);)
             this.takeMyBreathAwaaaaay(loc);
 
-            // TODO: possibleKoLoc setting isn't right.
+            // Set possibleKoLoc. ... TODO: unfuck Ko Logic
+            if (isLegalResponse.Killed.Count == 1
+                && isLegalResponse.Killed[0].Stones.Count == 1)
+            {
+                this.Game.PossibleKoLoc = isLegalResponse.Killed[0].Stones[0].Loc;
+            }
+
             RequestResponse response = new RequestResponse(new Move(new Stone(loc, IsWhiteMove), isLegalResponse.Killed));
 
             this.ChangeTurn();
