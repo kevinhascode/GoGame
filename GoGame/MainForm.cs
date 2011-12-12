@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Drawing.Drawing2D;
@@ -53,9 +54,32 @@ namespace GoGame
             for (int i = 0; i < numSquares; ++i)
                 for (int j = 0; j < numSquares; ++j)
                     using (Graphics g = gamePanel.CreateGraphics())
-                    {
                         g.DrawRectangle(Pens.Black, hpad + (1 / 2f * a) + a * i, vpad + (1 / 2f * a) + a * j, a, a);
-                    }
+        }
+
+        private void paintLines()
+        {
+            int hpad, vpad, a;
+            this.calcGridValues(out hpad, out vpad, out a);
+
+            int boardWidth = this.gamePanel.Width - (2 * hpad);
+            int bw = boardWidth;
+            int n = this.Game.BoardSize;
+            int lineLength = bw * (n - 1) / n;
+            int sqsz = bw / n;
+
+            for (int lineNum = 0; lineNum < n; ++lineNum)
+            {
+                using (Graphics g = gamePanel.CreateGraphics())
+                {
+                    // horizontal lines
+                    g.DrawLine(Pens.Black, (hpad + sqsz / 2), (vpad + sqsz / 2) + (lineNum * sqsz),
+                        (hpad + sqsz / 2 + lineLength), (vpad + sqsz / 2) + (lineNum * sqsz));
+                    // vertical lines
+                    g.DrawLine(Pens.Black, (hpad + sqsz / 2) + (lineNum * sqsz), vpad + sqsz / 2,
+                        (hpad + sqsz / 2) + (lineNum * sqsz), vpad + sqsz / 2 + lineLength);
+                }
+            }
         }
 
         // iterate through enumerable of stones, painting each one to the grid as it goes.
@@ -77,7 +101,11 @@ namespace GoGame
 
         private void mainSplitContainer_Panel1_Paint(object sender, PaintEventArgs e)
         {
-            this.paintSquares();
+            //Stopwatch sw = Stopwatch.StartNew();
+            //this.paintSquares();
+            this.paintLines();
+            //sw.Stop();
+            //Console.WriteLine(sw.Elapsed);
             this.paintStones();
         }
 
@@ -159,7 +187,7 @@ namespace GoGame
 
         }
 
-        private void PaintHoshi(object sender, PaintEventArgs e)
+        private void paintHoshi(object sender, PaintEventArgs e)
         {
             //e.Graphics.FillRectangle(Brushes.Black, this.Width / 2 - 2, this.Height / 2 - 2, 5, 5);
         }
