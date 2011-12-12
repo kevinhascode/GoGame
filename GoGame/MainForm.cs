@@ -43,7 +43,6 @@ namespace GoGame
 
         #region Painting code...
 
-        // TODO: (FUNC)(PERF) overhaul this so I'm not painting 2 to 4 lines per label, but instead painting BoardHeight * 2 lines across the entire board.
         private void paintSquares()
         {
             int hpad, vpad, a;
@@ -102,14 +101,16 @@ namespace GoGame
         private void mainSplitContainer_Panel1_Paint(object sender, PaintEventArgs e)
         {
             //Stopwatch sw = Stopwatch.StartNew();
-            //this.paintSquares();
-            this.paintLines();
+            this.paintSquares();
+            //this.paintLines();
             //sw.Stop();
             //Console.WriteLine(sw.Elapsed);
+
+            this.addHoshi();
             this.paintStones();
         }
 
-        private void calcGridValues(out int hpad, out int vpad, out int a)
+        private void calcGridValues(out int hpad, out int vpad, out int squareSize)
         {
             int H = this.gamePanel.Height;
             int W = this.gamePanel.Width;
@@ -117,7 +118,7 @@ namespace GoGame
             bool isWider = W > H;
 
             int lesser = (isWider) ? H : W;
-            a = lesser / this.Game.BoardSize;
+            squareSize = lesser / this.Game.BoardSize;
 
             if (isWider)
             {
@@ -142,22 +143,35 @@ namespace GoGame
          */
         private void addHoshi()
         {
+            int hpad, vpad, sqsz;
+            this.calcGridValues(out hpad, out vpad, out sqsz);
+            int boardWidth = this.gamePanel.Width - (2 * hpad);
+            int bw = boardWidth;
+            int n = this.Game.BoardSize;
+
             if (this.Game.BoardSize >= 12)
             {
-                int b = this.Game.BoardSize - 4;
-                //this.gameGrid[3, 3].Paint += new PaintEventHandler(this.gameGrid[3, 3].PaintHoshi);
-                //this.gameGrid[3, b].Paint += new PaintEventHandler(this.gameGrid[3, b].PaintHoshi);
-                //this.gameGrid[b, 3].Paint += new PaintEventHandler(this.gameGrid[b, 3].PaintHoshi);
-                //this.gameGrid[b, b].Paint += new PaintEventHandler(this.gameGrid[b, b].PaintHoshi);
+                int right = (int)(hpad + sqsz * (n - 3.5)) - 2;
+                int left = (int)(hpad + sqsz * 3.5) - 2;
+                int top = (int)(vpad + sqsz * 3.5) - 2;
+                int bottom = (int)(vpad + sqsz * (n - 3.5)) - 2;
+
+                this.paintHoshi(left, top);
+                this.paintHoshi(right, top);
+                this.paintHoshi(left, bottom);
+                this.paintHoshi(right, bottom);
 
                 if (this.Game.BoardSize % 2 != 0)
                 {   // if odd
-                    int c = this.Game.BoardSize / 2;
-                    //this.gameGrid[c, 3].Paint += new PaintEventHandler(this.gameGrid[c, c].PaintHoshi);
-                    //this.gameGrid[b, c].Paint += new PaintEventHandler(this.gameGrid[3, 3].PaintHoshi);
-                    //this.gameGrid[c, b].Paint += new PaintEventHandler(this.gameGrid[3, b].PaintHoshi);
-                    //this.gameGrid[3, c].Paint += new PaintEventHandler(this.gameGrid[b, 3].PaintHoshi);
-                    //this.gameGrid[c, c].Paint += new PaintEventHandler(this.gameGrid[b, b].PaintHoshi);
+                    int middleH = (int)(hpad + 1 / 2f * bw) - 2;
+                    int middleV = (int)(vpad + 1 / 2f * bw) - 2;
+
+                    this.paintHoshi(middleH, middleV);
+
+                    this.paintHoshi(middleH, top);
+                    this.paintHoshi(right, middleV);
+                    this.paintHoshi(middleH, bottom);
+                    this.paintHoshi(left, middleV);
                 }
 
                 return;
@@ -165,31 +179,36 @@ namespace GoGame
             if (this.Game.BoardSize >= 8)
             {
                 int b = this.Game.BoardSize - 3;
-                //this.gameGrid[2, 2].Paint += new PaintEventHandler(this.gameGrid[2, 2].PaintHoshi);
-                //this.gameGrid[2, b].Paint += new PaintEventHandler(this.gameGrid[2, b].PaintHoshi);
-                //this.gameGrid[b, 2].Paint += new PaintEventHandler(this.gameGrid[b, 2].PaintHoshi);
-                //this.gameGrid[b, b].Paint += new PaintEventHandler(this.gameGrid[b, b].PaintHoshi);
+                this.paintHoshi((int)(hpad + sqsz * 2.5) - 2, (int)(vpad + sqsz * 2.5) - 2);
+                this.paintHoshi((int)(hpad + sqsz * (n - 2.5)) - 2, (int)(vpad + sqsz * 2.5) - 2);
+                this.paintHoshi((int)(hpad + sqsz * 2.5) - 2, (int)(vpad + sqsz * (n - 2.5)) - 2);
+                this.paintHoshi((int)(hpad + sqsz * (n - 2.5)) - 2, (int)(vpad + sqsz * (n - 2.5)) - 2);
 
                 if (this.Game.BoardSize % 2 != 0)
-                {   // if odd         
-                    int c = this.Game.BoardSize / 2;
-                    //this.gameGrid[c, c].Paint += new PaintEventHandler(this.gameGrid[c, c].PaintHoshi);
+                {   // if odd
+                    // Paint at center
+                    this.paintHoshi((int)(hpad + 1 / 2f * bw) - 2, (int)(vpad + 1 / 2f * bw) - 2);
                 }
 
                 return;
             }
             if (this.Game.BoardSize == 5 || this.Game.BoardSize == 7)
             {
-                int c = this.Game.BoardSize / 2;
-                //this.gameGrid[c, c].Paint += new PaintEventHandler(this.gameGrid[c, c].PaintHoshi);
+                this.paintHoshi((int)(hpad + 1 / 2f * bw) - 2, (int)(vpad + 1 / 2f * bw) - 2);
+
                 return;
             }
+        }
 
+        private void paintHoshi(int x, int y)
+        {
+            using (Graphics g = gamePanel.CreateGraphics())
+                g.FillRectangle(Brushes.Black, x, y, 5, 5);
         }
 
         private void paintHoshi(object sender, PaintEventArgs e)
         {
-            //e.Graphics.FillRectangle(Brushes.Black, this.Width / 2 - 2, this.Height / 2 - 2, 5, 5);
+            e.Graphics.FillRectangle(Brushes.Black, this.Width / 2 - 2, this.Height / 2 - 2, 5, 5);
         }
 
         #endregion
