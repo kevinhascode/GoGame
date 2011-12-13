@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Text;
 
 namespace GoGame
 {
@@ -73,10 +74,13 @@ namespace GoGame
         public Loc PossibleKoLoc = new Loc(-1, -1);
         public bool LastWasPass;
 
+        private readonly List<MoveForLog> Log = new List<MoveForLog>();
+
         public GoGame()
         {
             this.boardSize = Properties.Settings.Default.BoardSize;
             this.handicap = Properties.Settings.Default.Handicap;
+            this.Log.Clear();
             this.PrisonersTakenByWhite = 0;
             this.PrisonersTakenByBlack = 0;
 
@@ -85,6 +89,7 @@ namespace GoGame
 
         public void Reset()
         {
+            this.Log.Clear();
             this.PrisonersTakenByWhite = 0;
             this.PrisonersTakenByBlack = 0;
             this.whiteChains.Clear();
@@ -114,9 +119,29 @@ namespace GoGame
             IsLegalResponse isLegalResponse = this.Logic.IsLegal(loc);
 
             if (isLegalResponse.Reason == ReasonEnum.Fine)
-                return this.Logic.PlaceStone(loc, isLegalResponse);
+            {
+                RequestResponse response = this.Logic.PlaceStone(loc, isLegalResponse);
+                this.Log.Add(new MoveForLog { Move = response.Move });//, Id = this.Log[this.Log.Count - 1].Id + 1 });
+                return response;
+            }
             else
                 return new RequestResponse(isLegalResponse.Reason);
+        }
+
+        internal string GenerateLog()
+        {
+            StringBuilder sb = new StringBuilder("(;GM[1]FF[4]VW[]AP[???]SZ[{0}]ST[1]KM[0]RU[Japanese]", this.boardSize).AppendLine();
+            sb.AppendFormat("HA[{0}]PB[Igo for windows]PW[Human]", this.handicap).AppendLine();
+
+            foreach (MoveForLog loggedMove in this.Log)
+            {
+                sb.AppendFormat(";{0}[{1}{2}]",
+                    (loggedMove.Move.StonePlaced.IsWhite ? "W" : "B"),
+                    loggedMove.Move.StonePlaced.Loc.X,
+                    loggedMove.Move.StonePlaced.Loc.Y).AppendLine();
+            }
+
+            return sb.ToString();
         }
     }
 }

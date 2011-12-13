@@ -290,5 +290,10 @@ namespace GoGame
             // TODO: Implement this.
             MessageBox.Show("Implement Me!!");
         }
+
+        private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            string log = this.Game.GenerateLog();
+        }
     }
 }
