@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace GoGame
@@ -121,7 +122,7 @@ namespace GoGame
             if (isLegalResponse.Reason == ReasonEnum.Fine)
             {
                 RequestResponse response = this.Logic.PlaceStone(loc, isLegalResponse);
-                this.Log.Add(new MoveForLog { Move = response.Move });//, Id = this.Log[this.Log.Count - 1].Id + 1 });
+                this.Log.Add(new MoveForLog { Move = response.Move });//, Id = this.Log.LastOrDefault().Id + 1 });
                 return response;
             }
             else
